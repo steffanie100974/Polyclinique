@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  },
+  "name": "polyclinique_manager",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "app": "concurrently \"cd frontend; yarn dev\" \"cd backend; npm run server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oussamachah2020/polyclinique_manager.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oussamachah2020/polyclinique_manager/issues"
+  },
+  "homepage": "https://github.com/oussamachah2020/polyclinique_manager#readme"
+}

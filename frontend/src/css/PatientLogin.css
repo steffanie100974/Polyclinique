@@ -1,0 +1,149 @@
+.patient-login-page section {
+  min-height: calc(100vh - 43px);
+  display: flex;
+  background-image: url("../assets/policlinique_background.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-blend-mode: multiply;
+  align-items: center;
+  justify-content: center;
+  -moz-column-gap: 30px;
+       column-gap: 30px;
+  margin-top: 17px;
+}
+.patient-login-page .eye-icon {
+  font-size: 18px;
+  color: #14ad7a;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  padding: 5px;
+}
+.patient-login-page .form {
+  position: absolute;
+  background: #fff;
+  border-radius: 6px;
+  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+}
+.patient-login-page header {
+  font-size: 28px;
+  font-weight: 600;
+  color: #232836;
+  text-align: center;
+}
+.patient-login-page form {
+  margin-top: 30px;
+}
+.patient-login-page .form .field {
+  position: relative;
+  height: 45px;
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 6px;
+}
+.patient-login-page .field input {
+  height: 100%;
+  width: 100%;
+  border: none;
+  font-size: 16px;
+  font-weight: 400;
+  border-radius: 6px;
+}
+.patient-login-page .field button {
+  width: 100%;
+}
+.patient-login-page .field input {
+  outline: none;
+  border: 1px solid #2fb88b;
+  padding: 0 15px;
+}
+.patient-login-page .field input:focus {
+  border-bottom-width: 2px;
+}
+.patient-login-page .eye-icon {
+  font-size: 18px;
+  color: #14ad7a;
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  padding: 5px;
+}
+.patient-login-page .field button {
+  color: #fff;
+  background-color: rgb(81, 203, 162);
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+.patient-login-page .field button:hover {
+  color: #fff;
+  background-color: rgb(67, 184, 145);
+}
+.patient-login-page .form-link {
+  text-align: center;
+  margin-top: 10px;
+}
+.patient-login-page .form-link span,
+.patient-login-page .form-link a {
+  font-size: 14px;
+  font-weight: 400;
+}
+.patient-login-page .form a {
+  color: #129167;
+  text-decoration: none;
+}
+.patient-login-page .form-content a:hover {
+  text-decoration: underline;
+}
+.patient-login-page .line {
+  height: 1px;
+  width: 100%;
+  position: relative;
+  margin: 36px 0;
+  background-color: #129167;
+}
+.patient-login-page .line::before {
+  content: "Or";
+  position: absolute;
+  top: 50%;
+  right: 40%;
+  background-color: #fff;
+  color: #232836;
+  transform: translate(-50%, -50%);
+  padding: 0 15px;
+}
+.patient-login-page .media-options a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.patient-login-page a.google {
+  color: #fff;
+  border: 1px solid #2da77e;
+  box-shadow: 1px 5px 5px 0px rgba(54, 66, 58, 0.34);
+  color: #232836;
+}
+.patient-login-page a.google .google-icon {
+  padding: 2px;
+  font-size: 18px;
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.patient-login-page .google-icon {
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+}
+.patient-login-page .form.login {
+  margin: 15px;
+  width: 95%;
+}/*# sourceMappingURL=PatientLogin.css.map */

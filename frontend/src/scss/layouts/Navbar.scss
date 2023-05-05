@@ -1,0 +1,147 @@
+@import "../variables/variabls.scss";
+@import "./containers.scss";
+@import "../themes/Buttons.scss";
+
+.navbar {
+  margin-top: 17px !important;
+  align-items: center;
+  background: transparent;
+  display: flex;
+  flex-direction: row;
+  font-family: sans-serif;
+  .push-left {
+    margin-left: auto;
+  }
+
+  /* Menu */
+  .hamburger {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    display: none;
+    outline: none;
+    height: 30px;
+    position: relative;
+    width: 30px;
+    z-index: 1000;
+    @media screen and (max-width: 1000px) {
+      display: inline-block;
+    }
+
+    &-line {
+      background: black;
+      height: 3px;
+      position: absolute;
+      left: 0;
+      transition: all 0.2s ease-out;
+      width: 100%;
+
+      .hamburger:hover & {
+        background: #777;
+      }
+
+      &-top {
+        top: 3px;
+      }
+
+      .menu-active &-top {
+        top: 50%;
+        transform: rotate(45deg) translatey(-50%);
+      }
+
+      &-middle {
+        top: 50%;
+        transform: translatey(-50%);
+      }
+
+      .menu-active &-middle {
+        left: 50%;
+        opacity: 0;
+        width: 0;
+      }
+
+      &-bottom {
+        bottom: 3px;
+      }
+
+      .menu-active &-bottom {
+        bottom: 50%;
+        transform: rotate(-45deg) translatey(50%);
+      }
+    }
+  }
+
+  .nav-menu {
+    display: flex;
+    align-items: center;
+    column-gap: 30px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    transition: all 0.25s ease-in;
+
+    @media screen and (max-width: 1000px) {
+      background: linear-gradient(to bottom, $primary-clr, $secondary-clr);
+      flex-direction: column;
+      justify-content: center;
+      opacity: 0;
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      transform: translatey(-100%);
+      text-align: center;
+      z-index: 100;
+      .nav__link.active {
+        color: white !important;
+        &::after {
+          background: white !important;
+        }
+      }
+    }
+
+    .menu-item a {
+      color: black;
+      display: block;
+      line-height: 30px;
+
+      text-decoration: none;
+      font-family: "Montserrat";
+      font-style: normal;
+      font-weight: 500;
+      font-size: 18px;
+      color: #393939;
+      position: relative;
+      &:hover,
+      &.active {
+        color: $primary-clr;
+      }
+      &.active::after {
+        content: "";
+        background: linear-gradient(
+          45deg,
+          $primary-clr 0%,
+          $secondary-clr 100%
+        );
+        width: 8px;
+        height: 8px;
+        position: absolute;
+        top: -5px;
+        left: -5px;
+        border-radius: 50%;
+      }
+
+      @media screen and (max-width: 1000px) {
+        font-size: 20px;
+        margin: 8px;
+      }
+    }
+  }
+  @media screen and (max-width: 1000px) {
+    .menu-active {
+      transform: translatey(0%);
+      opacity: 1;
+    }
+  }
+}

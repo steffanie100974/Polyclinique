@@ -1,0 +1,62 @@
+@import url("../variables/variabls.scss");
+.btn-primary {
+  background: linear-gradient(
+    95.61deg,
+    $primary-clr-dark 0%,
+    $secondary-clr-dark 100%
+  );
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  border-radius: 5px;
+  padding: 4px 22px;
+  transition: all 0.3s ease-out;
+  color: #ffffff;
+  font-family: "Lobster Two";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 25px;
+  border-color: transparent;
+  &:hover {
+    background: linear-gradient(95.61deg, $primary-clr 0%, $secondary-clr 100%);
+    box-shadow: 0px 2px 4px #132a13;
+  }
+  &:disabled {
+    background: linear-gradient(
+      95.61deg,
+      $primary-clr-dark 0%,
+      $secondary-clr-dark 100%
+    );
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.5);
+  }
+}
+
+.btn-secondary {
+  border: 1px solid $primary-clr;
+  filter: drop-shadow(1px 0px 4px #132a13);
+  border-radius: 5px;
+  padding: 4px 22px;
+  color: $primary-clr;
+  font-family: "Lobster Two";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 25px;
+  &:hover {
+    border: 1px solid transparent; /* set the border width and style */
+    background-clip: padding-box; /* ensure the gradient only shows within the border */
+    border-image: linear-gradient(to right, $secondary-clr, $primary-clr) 1;
+    background-color: white !important;
+    span {
+      //   background: -webkit-linear-gradient(#eee, #333);
+
+      background: linear-gradient(95.61deg, #29f19b 0%, #00a8e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-fill-color: transparent;
+    }
+  }
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed !important;
+}

@@ -1,0 +1,154 @@
+// .section {
+//   min-height: calc(100vh - 43px);
+
+//   display: flex;
+//   background-color: rgba(17, 210, 165, 0.596);
+//   background-image: url("../../assets/policlinique_background.jpg");
+//   background-size: cover;
+//   background-repeat: no-repeat;
+//   background-blend-mode: multiply;
+//   align-items: center;
+//   justify-content: center;
+//   column-gap: 30px;
+//   margin-top: 15px;
+// }
+
+// .eye-icon {
+//   font-size: 18px;
+//   color: #14ad7a;
+//   position: absolute;
+//   top: 50%;
+//   right: 10px;
+//   transform: translateY(-50%);
+//   cursor: pointer;
+//   padding: 5px;
+// }
+
+// .form {
+//   position: absolute;
+//   background: #fff;
+//   border-radius: 6px;
+//   padding: 30px;
+//   width: 100%;
+//   max-width: 500px;
+// }
+
+// header {
+//   font-size: 28px;
+//   font-weight: 600;
+//   color: #232836;
+//   text-align: center;
+// }
+// form {
+//   margin-top: 30px;
+// }
+// .form .field {
+//   position: relative;
+//   height: 45px;
+//   width: 100%;
+//   margin-top: 20px;
+//   border-radius: 6px;
+// }
+// .field input,
+// .field button {
+//   height: 100%;
+//   width: 100%;
+//   border: none;
+//   font-size: 16px;
+//   font-weight: 400;
+//   border-radius: 6px;
+// }
+// .field input {
+//   outline: none;
+//   border: 1px solid #2fb88b;
+//   padding: 0 15px;
+// }
+// .field input:focus {
+//   border-bottom-width: 2px;
+// }
+// .eye-icon {
+//   font-size: 18px;
+//   color: #14ad7a;
+//   position: absolute;
+//   top: 50%;
+//   right: 10px;
+//   transform: translateY(-50%);
+//   cursor: pointer;
+//   padding: 5px;
+// }
+// .field button {
+//   color: #fff;
+//   background-color: rgb(81, 203, 162);
+//   transition: all 0.3s ease;
+//   cursor: pointer;
+// }
+// .field button:hover {
+//   color: #fff;
+//   background-color: rgb(67, 184, 145);
+// }
+// .form-link {
+//   text-align: center;
+//   margin-top: 10px;
+// }
+// .form-link span,
+// .form-link a {
+//   font-size: 14px;
+//   font-weight: 400;
+// }
+// .form a {
+//   color: #129167;
+//   text-decoration: none;
+// }
+// .form-content a:hover {
+//   text-decoration: underline;
+// }
+
+// .line {
+//   height: 1px;
+//   width: 100%;
+//   position: relative;
+//   margin: 36px 0;
+//   background-color: #129167;
+// }
+// .line::before {
+//   content: "Or";
+//   position: absolute;
+//   top: 50%;
+//   right: 40%;
+//   background-color: #fff;
+//   color: #232836;
+//   transform: translate(-50%, -50%);
+//   padding: 0 15px;
+// }
+// .media-options a {
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+// }
+
+// a.google {
+//   color: #fff;
+//   border: 1px solid #2da77e;
+//   box-shadow: 1px 5px 5px 0px rgba(54, 66, 58, 0.34);
+//   color: #232836;
+// }
+// a.google .google-icon {
+//   padding: 2px;
+//   font-size: 18px;
+//   background-color: #fff;
+//   // color: #2da77e;
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   border-radius: 50%;
+// }
+// .google-icon {
+//   position: absolute;
+//   top: 50%;
+//   left: 15px;
+//   transform: translateY(-50%);
+// }
+// .form.login {
+//   margin: 15px;
+//   width: 95%;
+// }

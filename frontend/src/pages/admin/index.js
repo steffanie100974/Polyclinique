@@ -1,0 +1,6 @@
+import AddDoctor from "./AddDoctor";
+import AdminDashboard from "./AdminDashboard";
+import AdminDoctors from "./AdminDoctors";
+import AdminLogin from "./AdminLogin";
+import DoctorPage from "./DoctorPage";
+export { AddDoctor, AdminDashboard, AdminDoctors, AdminLogin, DoctorPage };

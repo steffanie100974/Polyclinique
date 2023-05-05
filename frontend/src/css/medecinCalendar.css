@@ -1,0 +1,20 @@
+.fc-toolbar-title {
+  font-size: 1.2rem !important;
+}
+.fc-event-time {
+  display: none;
+}
+
+.fc-event {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-items: flex-start;
+  overflow: auto;
+  color: red !important;
+}
+
+.fc-event-title {
+  font-size: 11px;
+}
