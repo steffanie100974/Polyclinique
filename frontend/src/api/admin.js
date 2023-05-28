@@ -11,7 +11,7 @@ export const adminLogin = async (email, password) => {
 };
 
 export const getMedecins = async (adminToken) => {
-  const response = await api.get("/medecin", {
+  const response = await api.get("/medecin/all", {
     headers: {
       Authorization: `Bearer ${adminToken}`,
     },
@@ -21,7 +21,7 @@ export const getMedecins = async (adminToken) => {
 };
 
 export const addDoctor = async (doctorData, adminToken) => {
-  const response = await api.post("/medecin", doctorData, {
+  const response = await api.post("/medecin/all", doctorData, {
     headers: {
       Authorization: `Bearer ${adminToken}`,
     },
@@ -31,7 +31,7 @@ export const addDoctor = async (doctorData, adminToken) => {
 };
 
 export const deleteDoctor = async (doctorID, adminToken) => {
-  const response = await api.delete(`/medecin/${doctorID}`, {
+  const response = await api.delete(`/medecin/all/${doctorID}`, {
     headers: {
       Authorization: `Bearer ${adminToken}`,
     },
@@ -42,7 +42,7 @@ export const deleteDoctor = async (doctorID, adminToken) => {
 
 export const resetDoctorPW = async (doctorID, newPassword, adminToken) => {
   const response = await api.patch(
-    `/medecin/${doctorID}/reset-password`,
+    `/medecin/all/${doctorID}/reset-password`,
     {
       password: newPassword,
     },
@@ -57,7 +57,7 @@ export const resetDoctorPW = async (doctorID, newPassword, adminToken) => {
 };
 
 export const getDoctor = async (doctorID, adminToken) => {
-  const response = await api.get(`/medecin/${doctorID}/`, {
+  const response = await api.get(`/medecin/all/${doctorID}/`, {
     headers: {
       Authorization: `Bearer ${adminToken}`,
     },

@@ -8,17 +8,9 @@ import "./css/resets.css";
 import PublicNav from "./components/PublicNav";
 import Landing from "./pages/public/landing/Landing";
 import Department from "./pages/public/department/Department";
-import PatientLogin from "./pages/auth/patient/PatientLogin";
-import PatientRegister from "./pages/auth/patient/PatientRegister";
-import DoctorLogin from "./pages/auth/doctor/DoctorLogin";
-import PatientDashboard from "./pages/patient/PatientDashboard";
 import { ToastContainer } from "react-toastify";
 import Sidebar from "./components/Sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
-import MedecinDashboard from "./pages/medecin/MedecinDashboard";
-import MedecinNavbar from "./components/MedecinNavbar";
-import MedecinOrdonnances from "./pages/medecin/MedecinOrdonnances";
-import MedecinFactures from "./pages/medecin/MedecinFactures";
 
 import AdminNavbar from "./components/AdminNavbar";
 import {
@@ -28,7 +20,23 @@ import {
   AddDoctor,
   DoctorPage,
 } from "./pages/admin";
-
+import {
+  PatientDashboard,
+  PatientLogin,
+  PatientOrdonnances,
+  PatientRDVS,
+  PatientSignup,
+} from "./pages/patient";
+import {
+  MedecinDashboard,
+  MedecinFactures,
+  MedecinLogin,
+  MedecinOrdonnances,
+} from "./pages/medecin";
+import MedecinNavbar from "./components/MedecinNavbar";
+import PatientFacturesPage from "./pages/patient/PatientFacturesPage";
+import DoctorCalendarPage from "./pages/medecin/DoctorCalendarPage";
+import DoctorProfile from "./pages/medecin/DoctorProfile";
 function App() {
   return (
     <div className="App">
@@ -37,9 +45,9 @@ function App() {
           {/* public routes */}
           <Route path="/" element={<PublicNav />}>
             <Route index element={<Landing />} />
-            <Route path="patient/signup" element={<PatientRegister />} />
+            <Route path="patient/signup" element={<PatientSignup />} />
             <Route path="patient/login" element={<PatientLogin />} />
-            <Route path="medecin/login" element={<DoctorLogin />} />
+            <Route path="medecin/login" element={<MedecinLogin />} />
             <Route path="departements">
               <Route path=":departmentName" element={<Department />} />
             </Route>
@@ -49,6 +57,9 @@ function App() {
           <Route path="/patient" element={<Sidebar />}>
             <Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<PatientDashboard />} />
+            <Route path="ordonnances" element={<PatientOrdonnances />} />
+            <Route path="rendezvous" element={<PatientRDVS />} />
+            <Route path="factures" element={<PatientFacturesPage />} />
           </Route>
 
           {/* medecin routes */}
@@ -57,6 +68,8 @@ function App() {
             <Route path="dashboard" element={<MedecinDashboard />} />
             <Route path="ordonnances" element={<MedecinOrdonnances />} />
             <Route path="factures" element={<MedecinFactures />} />
+            <Route path="calendrier" element={<DoctorCalendarPage />} />
+            <Route path="profile" element={<DoctorProfile />} />
           </Route>
 
           {/* admin routes */}

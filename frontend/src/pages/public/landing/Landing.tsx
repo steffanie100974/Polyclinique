@@ -5,7 +5,6 @@ import QualifiedIcon from "../../../assets/landing-page/medalstar.svg";
 import MoneyIcon from "../../../assets/landing-page/moneyrecive.svg";
 import TimeIcon from "../../../assets/landing-page/timer1.svg";
 import HeroImg from "../../../assets/landing-page/hero-img.png";
-import Spinner from "../../../components/Spinner";
 import "./Landing.scss";
 import Department from "../../../types/Department";
 const Landing = () => {
@@ -28,9 +27,7 @@ const Landing = () => {
       setIsLoading(false);
     }
   };
-  if (isLoading) {
-    return <Spinner />;
-  }
+
   return (
     <div className="landing-page">
       <section className="hero">

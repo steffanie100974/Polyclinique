@@ -6,6 +6,58 @@ const Facture = require("../models/FactureModal");
 const Ordonnance = require("../models/OrdonnanceModal");
 const RDV = require("../models/rendezVous.modal");
 
+const updateDoctorProfile = async (req, res) => {
+  const { firstName, lastName, email, phone, currentPassword, newPassword } =
+    req.body;
+  const { _id: medecinID } = req.medecin;
+
+  try {
+    let medecin = await Medecin.findById(medecinID);
+
+    if (!medecin) {
+      return res.status(404).json({ message: "Medecin not found" });
+    }
+
+    // Update basic profile fields
+    medecin.firstName = firstName;
+    medecin.lastName = lastName;
+    medecin.email = email;
+    medecin.phone = phone;
+
+    if (currentPassword && newPassword) {
+      // Password change requested
+      const isPasswordMatch = await bcrypt.compare(
+        currentPassword,
+        medecin.password
+      );
+
+      if (!isPasswordMatch) {
+        return res
+          .status(400)
+          .json({ message: "Mot de passe actuel incorrect" });
+      }
+
+      // Hash and update the new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      medecin.password = hashedPassword;
+    }
+
+    // Save the updated medecin profile
+    medecin = await medecin.save();
+
+    return res.json({ message: "Profil mis à jour avec succès", medecin });
+  } catch (error) {
+    console.log("Error updating profile:", error);
+    return res.status(500).json({
+      message: "Une erreur s'est produite lors de la mise à jour du profil",
+    });
+  }
+};
+
+const getDoctorProfile = AsyncHandler(async (req, res) => {
+  return res.status(200).json(req.medecin);
+});
+
 // ------------------> MEDECIN AUTH CONTROLLERS
 const register = AsyncHandler(async (req, res) => {
   const {
@@ -72,140 +124,22 @@ const login = AsyncHandler(async (req, res) => {
   if (!matchingPassword)
     return res.status(401).json({ message: "Mot de passe incorrect" });
 
-  return res.status(200).json({
-    ...medecin,
-    token: genToken(medecin._id),
-  });
+  const token = genToken(medecin._id);
+  return res.status(200).json(token);
 });
 
 // ------------------> END OF  MEDECIN AUTH CONTROLLERS
 
 // -----------------> MEDECIN ORDONNANCES CONTROLLERS
-// ajouter une ordonnance
-const addOrdonnance = AsyncHandler(async (req, res) => {
-  console.log("api hit");
-  const { _id: medecinID } = req.medecin;
-  const { patientID, description, medicaments } = req.body;
-
-  if (!patientID)
-    return res
-      .status(400)
-      .json({ message: "L'identifiant du patient est obligatoire" });
-  if (!medicaments)
-    return res
-      .status(400)
-      .json({ message: "Les medicaments sonts obligatoires" });
-  try {
-    const ordonnance = await Ordonnance.create({
-      medecinID,
-      patientID,
-      description,
-      medicaments,
-    });
-    const populatedOrdonnance = await ordonnance.populate(
-      "patientID",
-      "lastName firstName"
-    );
-    res.status(201).json(populatedOrdonnance);
-  } catch (error) {
-    console.log("erooor", error);
-    res.status(500).json(error);
-  }
-});
-
-// get medecin ordonnances
-const getMedecinOrdonnances = AsyncHandler(async (req, res) => {
-  const { _id: medecinID } = req.medecin;
-  console.log("api hit");
-  try {
-    const ordonnances = await Ordonnance.find({ medecinID }).populate(
-      "patientID",
-      "lastName firstName"
-    );
-
-    res.status(200).json(ordonnances);
-  } catch (error) {
-    console.log("eroor", error);
-    res.status(500).json(error);
-  }
-});
-
-// delete ordonnance
-const deleteOrdonnance = AsyncHandler(async (req, res) => {
-  const { _id } = req.params;
-  try {
-    const deletedOrdonnance = await Ordonnance.findByIdAndDelete(_id);
-    if (deletedOrdonnance) {
-      res.status(200).json({ message: "Ordonnance deleted successfully" });
-    } else {
-      res.status(404).json({ message: "Ordonnance not found" });
-    }
-  } catch (error) {
-    console.log("error", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 
 // -----------------> END OF MEDECIN ORDONNANCES CONTROLLERS
 
 // -----------------> MEDECIN FACTURES CONTROLLERS
 
-const getMedecinFactures = AsyncHandler(async (req, res) => {
-  const { _id: medecinID } = req.medecin;
-  try {
-    const factures = await Facture.find()
-      .populate({
-        path: "rdvID",
-        select: "patientID medecinID",
-        populate: {
-          path: "patientID",
-          select: "firstName lastName",
-        },
-      })
-      .exec();
-
-    console.log("factuuress", factures);
-    const filteredFactures = factures
-      .filter(
-        (facture) => facture.rdvID.medecinID.toString() === medecinID.toString()
-      )
-      .map((facture) => {
-        return {
-          _id: facture._id,
-          price: facture.price,
-          isPaid: facture.isPaid,
-          deadline: facture.deadline,
-          rdv: { _id: facture.rdvID._id, patientID: facture.rdvID.patientID },
-          createdAt: facture.createdAt,
-        };
-      });
-
-    console.log("filtered factures", filteredFactures);
-    res.status(200).json(filteredFactures);
-  } catch (error) {
-    console.log("error", error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
 // -----------------> END OF MEDECIN FACTURES CONTROLLERS
 
 // -----------------> MEDECIN RDVS CONTROLLERS
-const getMedecinFutureRDVS = AsyncHandler(async (req, res) => {
-  const { _id: medecinID } = req.medecin;
-  try {
-    const futureRDVS = await RDV.find({
-      medecinID: medecinID,
-      date: { $gte: new Date() },
-    }).populate("patientID", "lastName firstName");
-    if (futureRDVS.length === 0)
-      return res.status(404).json({ message: "Vous n'avez aucun RDV à venir" });
 
-    return res.status(200).json(futureRDVS);
-  } catch (error) {
-    console.log("erroor", error);
-    return res.status(500).json(error);
-  }
-});
 const getMedecinPastRDVS = AsyncHandler(async (req, res) => {
   const { _id: medecinID } = req.medecin;
   try {
@@ -223,64 +157,10 @@ const getMedecinPastRDVS = AsyncHandler(async (req, res) => {
 
 // -----------------> END OF MEDECIN RDVS CONTROLLERS
 
-const getMedecinPatients = AsyncHandler(async (req, res) => {
-  const { _id: medecinID } = req.medecin;
-
-  const now = new Date(); // get current date and time
-
-  const medecinRDVS = await RDV.aggregate([
-    { $match: { medecinID } }, // filter by medecinID
-    {
-      $group: {
-        _id: "$patientID", // group by patientID
-        rdvs: {
-          $push: {
-            _id: "$_id",
-            date: "$date",
-            heure: "$heure",
-            typeService: "$typeService",
-          },
-        },
-      },
-    },
-    {
-      $project: {
-        rdvs: { $slice: ["$rdvs", -1] }, // select only the latest appointment
-      },
-    },
-    {
-      $lookup: {
-        from: "patients",
-        localField: "_id",
-        foreignField: "_id",
-        as: "patient",
-      },
-    }, // join with patients collection
-    { $unwind: "$patient" }, // destructure patient array
-    // { $match: { "rdvs.date": { $lte: new Date() } } }, // filter out appointments that have not yet occurred
-    { $sort: { "rdvs.date": -1 } }, // sort rdvs array by date in descending order
-  ]);
-
-  console.log("medecin rdvs", medecinRDVS);
-
-  const patients = medecinRDVS.map(({ patient, rdvs }) => {
-    console.log("rdvs", rdvs);
-    return {
-      patient,
-      rdv: rdvs[0],
-    };
-  });
-  // rename rdvs to rdv
-
-  console.log("patients", patients);
-
-  res.status(200).json(patients);
-});
-
 const getDepartmentDoctors = AsyncHandler(async (req, res) => {
   const { departmentID } = req.params;
-
-  const doctors = await Medecin.find({ department: departmentID });
+  console.log("department id", departmentID);
+  const doctors = await Medecin.find({ departmentID });
   return res.status(200).json(doctors);
 });
 
@@ -360,7 +240,7 @@ const resetMedecinPassword = AsyncHandler(async (req, res) => {
 // get all medecins
 const getMedecins = AsyncHandler(async (req, res) => {
   try {
-    const medecins = await Medecin.find().populate("department", "name");
+    const medecins = await Medecin.find().populate("department");
     if (medecins.length == 0)
       return res.status(404).json({ message: "No medecins found" });
     res.status(200).json(medecins);
@@ -395,15 +275,11 @@ module.exports = {
   login,
   getDepartmentDoctors,
   addDoctor,
-  getMedecinFutureRDVS,
-  getMedecinPatients,
-  addOrdonnance,
-  getMedecinOrdonnances,
-  deleteOrdonnance,
   getMedecinPastRDVS,
-  getMedecinFactures,
   getMedecins,
   deleteDoctor,
   resetMedecinPassword,
   getDoctor,
+  getDoctorProfile,
+  updateDoctorProfile,
 };

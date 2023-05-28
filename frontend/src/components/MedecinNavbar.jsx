@@ -2,19 +2,20 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { NavLink, Outlet } from "react-router-dom";
+import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
-import { useDispatch } from "react-redux";
-import { logout } from "../features/auth/authSlice";
+import { useUserContext } from "../contexts/useUserContext";
 const MedecinNavbar = () => {
-  const dispatch = useDispatch();
+  const { logout } = useUserContext();
+  const { userToken } = useUserContext();
+  if (!userToken) return <Navigate to="/" />;
   return (
     <>
       <Navbar className="mt-0" bg="light" expand="lg">
         <Container>
-          <Navbar.Brand href="/medecin/dashboard">
+          <Navbar.Brand as={Link} to="/medecin/dashboard">
             <img src={logo} alt="logo" />
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
@@ -32,17 +33,17 @@ const MedecinNavbar = () => {
                 className={(isActive) =>
                   "nav-link" + (isActive ? "" : " text-primary")
                 }
-                to="/medecin/factures"
+                to="/medecin/calendrier"
               >
-                Factures
+                Calendrier
               </NavLink>
               <NavLink
                 className={(isActive) =>
                   "nav-link" + (isActive ? "" : " text-primary")
                 }
-                to="/medecin/patients"
+                to="/medecin/factures"
               >
-                Patients
+                Factures
               </NavLink>
 
               <NavDropdown
@@ -54,10 +55,7 @@ const MedecinNavbar = () => {
                 </NavDropdown.Item>
 
                 <NavDropdown.Divider />
-                <NavDropdown.Item
-                  style={{ color: "red" }}
-                  onClick={() => dispatch(logout())}
-                >
+                <NavDropdown.Item style={{ color: "red" }} onClick={logout}>
                   Logout
                 </NavDropdown.Item>
               </NavDropdown>

@@ -11,11 +11,11 @@ import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import generateRandomPW from "../helpers/generateRandomPW";
 import { toast } from "react-toastify";
 const ResetMedecinPWModal = ({ id, show, setShow }) => {
-  const { user } = useUserContext();
+  const { userToken } = useUserContext();
   const handleClose = () => setShow(false);
 
   const { mutate, isError, error, isLoading } = useMutation({
-    mutationFn: () => resetDoctorPW(id, password, user.token),
+    mutationFn: () => resetDoctorPW(id, password, userToken),
     onSuccess: (data) => {
       handleClose();
       toast.success(data.message);
@@ -27,7 +27,7 @@ const ResetMedecinPWModal = ({ id, show, setShow }) => {
     <>
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Supprimer un médecin</Modal.Title>
+          <Modal.Title>Réinitialiser le mot de passe d'un médecin</Modal.Title>
         </Modal.Header>
         <Form
           onSubmit={(e) => {

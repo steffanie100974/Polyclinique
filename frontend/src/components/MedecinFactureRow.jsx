@@ -1,54 +1,68 @@
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
 import { toast } from "react-toastify";
-import formatDate from "../utilities/formatDate";
-import { Button } from "react-bootstrap";
+import formatDate from "../helpers/formatDate";
+import { Button, Form } from "react-bootstrap";
+import { useUserContext } from "../contexts/useUserContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteFacture, updateDoctorFacture } from "../api/facture";
+import { getErrorMessage } from "../helpers/getErrorMessage";
 
-const MedecinFactureRow = ({ facture, setFactures }) => {
-  const { user } = useSelector((state) => state.auth);
-  const [isDeleting, setIsDeleting] = useState(false);
+const MedecinFactureRow = ({ facture }) => {
+  const { userToken } = useUserContext();
+  const queryClient = useQueryClient();
+  const { mutate: mutateByDelete, isLoading } = useMutation({
+    mutationFn: (factureID) => deleteFacture(factureID, userToken),
+    onError: (error) => toast.error(getErrorMessage(error)),
+    onSuccess: () => {
+      toast.success("Facture supprimé avec success");
+      queryClient.invalidateQueries(["factures"]);
+    },
+  });
 
-  const deleteFacture = async (id) => {
-    try {
-      setIsDeleting(true);
-      await axios.delete(
-        `http://localhost:3001/factures/${id}`,
-
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
-      toast.success("Facture suprimé avec succès");
-      setFactures((prevFactures) =>
-        prevFactures.filter((facture) => facture._id !== id)
-      );
-    } catch (error) {
-      console.log("eroooor", error);
-      toast.error(error.response.data.message);
-    } finally {
-      setIsDeleting(false);
-    }
-  };
+  const { mutate: mutateByUpdate, isLoading: isUpdating } = useMutation({
+    mutationFn: ({ factureID, newData }) =>
+      updateDoctorFacture(factureID, newData, userToken),
+    onSuccess: () => {
+      toast.success("Facture état modifié avec success");
+      queryClient.invalidateQueries(["factures"]);
+    },
+  });
   return (
     <tr key={facture._id}>
       <td>
-        {facture.rdv.patientID.firstName} {facture.rdv.patientID.lastName}
+        {facture.rdv.patient.firstName} {facture.rdv.patient.lastName}
       </td>
       <td>{facture.price}</td>
-      <td>{facture.createdAt && formatDate(facture.createdAt)}</td>
+      <td>{formatDate(facture.createdAt)}</td>
+      <td>
+        <Form.Select
+          disabled={isUpdating}
+          defaultValue={facture.isPaid}
+          onChange={(e) =>
+            mutateByUpdate({
+              factureID: facture._id,
+              newData: { isPaid: e.target.value },
+            })
+          }
+        >
+          <option style={{ color: "green" }} value={true}>
+            Oui
+          </option>
+          <option style={{ color: "red" }} value={false}>
+            Non
+          </option>
+        </Form.Select>
+      </td>
       <td>{formatDate(facture.deadline)}</td>
       <td>
         <Button
-          disabled={isDeleting}
+          disabled={isLoading}
           variant="danger"
-          onClick={() => deleteFacture(facture._id)}
+          onClick={() => mutateByDelete(facture._id)}
         >
-          {isDeleting ? <FontAwesomeIcon icon={faSpinner} spin /> : "Supprimer"}
+          {isLoading ? <FontAwesomeIcon icon={faSpinner} spin /> : "Supprimer"}
         </Button>
       </td>
     </tr>

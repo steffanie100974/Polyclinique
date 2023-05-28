@@ -4,18 +4,14 @@ import OrdonnanceForm from "../../components/OrdonnanceForm";
 import MedecinOrdonnancesList from "../../components/MedecinOrdonnancesList";
 
 const MedecinOrdonnances = () => {
-  const [ordonnances, setOrdonnances] = useState([]);
   return (
     <Container className="py-5">
       <Row>
         <Col xs="12" lg="4">
-          <OrdonnanceForm setOrdonnances={setOrdonnances} />
+          <OrdonnanceForm />
         </Col>
         <Col xs="12" lg="8">
-          <MedecinOrdonnancesList
-            ordonnances={ordonnances}
-            setOrdonnances={setOrdonnances}
-          />
+          <MedecinOrdonnancesList />
         </Col>
       </Row>
     </Container>

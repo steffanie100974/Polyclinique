@@ -46,10 +46,8 @@ const adminLogin = async (req, res) => {
   if (!matchingPassword)
     return res.status(401).json({ message: "Mot de passe incorrect" });
 
-  return res.status(200).json({
-    ...admin,
-    token: genToken(admin._id),
-  });
+  const token = genToken(admin._id);
+  return res.status(200).json(token);
 };
 
 const genToken = (id) => {

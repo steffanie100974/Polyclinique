@@ -4,46 +4,54 @@ const {
   login,
   getDepartmentDoctors,
   addDoctor,
-  getMedecinFutureRDVS,
-  getMedecinPatients,
-  addOrdonnance,
-  getMedecinOrdonnances,
-  deleteOrdonnance,
   getMedecinPastRDVS,
-  getMedecinFactures,
   getMedecins,
   deleteDoctor,
   resetMedecinPassword,
   getDoctor,
+  getDoctorProfile,
+  updateDoctorProfile,
 } = require("../controllers/medecin.controller");
 const medecinAuth = require("../Middleware/medecinAuthMiddleware");
 const adminAuth = require("../Middleware/adminAuthMiddleware");
+const { getMedecinPatients } = require("../controllers/patient.controller");
+const {
+  getDoctorFactures,
+  updateFacture,
+} = require("../controllers/facture.controller");
+const { addOrdonnance } = require("../controllers/ordonnance.controller");
 const route = express.Router();
 
-// medecins routes that only admins can access
-route.get("/", adminAuth, getMedecins);
-route.post("/", adminAuth, addDoctor);
-route.get("/:id", adminAuth, getDoctor);
-route.delete("/:id", adminAuth, deleteDoctor);
-route.patch("/:id/reset-password", adminAuth, resetMedecinPassword);
-
-// medecin auth routes
-route.post("/register", register).post("/login", login);
-
-// medecin factures routes
-route.get("/factures", medecinAuth, getMedecinFactures);
-
-route.get("/departmentDoctors/:departmentID", getDepartmentDoctors);
+route.get("/", medecinAuth, getDoctorProfile);
+route.put("/", medecinAuth, updateDoctorProfile);
 
 route.get("/patients", medecinAuth, getMedecinPatients);
 
+// medecin auth routes
+route.post("/register", register);
+route.post("/login", login);
+
+// medecin profile routes
+
+// medecin factures routes
+route.get("/factures", medecinAuth, getDoctorFactures);
+route.put("/factures/:factureID", medecinAuth, updateFacture);
+
+// medecin departments rotues
+route.get("/department/:departmentID", getDepartmentDoctors);
+
 // medecin rdvs routes
-route.get("/futureAppointments", medecinAuth, getMedecinFutureRDVS);
 route.get("/pastAppointments", medecinAuth, getMedecinPastRDVS);
 
 // medecin ordonnances routes
 route.post("/ordonnances", medecinAuth, addOrdonnance);
-route.get("/ordonnances", medecinAuth, getMedecinOrdonnances);
-route.delete("/ordonnances/:_id", medecinAuth, deleteOrdonnance);
+
+// medecins routes that only admins can access
+route.get("/all", adminAuth, getMedecins);
+
+route.post("/all", adminAuth, addDoctor);
+route.get("/all/:id", adminAuth, getDoctor);
+route.delete("/all/:id", adminAuth, deleteDoctor);
+route.patch("/all/:id/reset-password", adminAuth, resetMedecinPassword);
 
 module.exports = route;

@@ -1,58 +1,58 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import "../../../css/PatientLogin.css";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { login } from "../../../features/auth/authSlice";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import Alert from "react-bootstrap/Alert";
+import { useMutation } from "@tanstack/react-query";
+import { medecinLogin } from "../../api/medecin";
+import { useUserContext } from "../../contexts/useUserContext";
+import { getErrorMessage } from "../../helpers/getErrorMessage";
 
-function PatientLogin() {
+const MedecinLogin = () => {
   const [visible, setVisible] = useState(false);
-
-  const dispatch = useDispatch();
+  const { saveUserToken } = useUserContext();
   const navigate = useNavigate();
 
   const showPassword = () => (visible ? setVisible(false) : setVisible(true));
+  const { mutate, isLoading, isError, error } = useMutation({
+    mutationFn: (credentials) => medecinLogin(credentials),
+    onSuccess: (data) => {
+      console.log("login token", data);
+      saveUserToken(data);
+      navigate("/medecin/dashboard");
+    },
+  });
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
-
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
+    const { email, password } = formData;
+    if (!email) return toast.info("Remplir l'email svp");
+    if (!password) return toast.info("Remplir le mot de passe svp");
 
-    if (!formData.email) return toast.info("Remplir l'email svp");
-    if (!formData.password) return toast.info("Remplir le mot de passe svp");
-
-    dispatch(login({ userType: "patient", userData: formData }));
+    mutate({ email, password });
   };
-  useEffect(() => {
-    console.log("is success", isSuccess);
-    if (isSuccess) setTimeout(() => navigate("/patient/dashboard"), 1500);
-  }, [isSuccess]);
 
   return (
     <div className="patient-login-page">
       <section className="forms">
         <div className="form login">
           <div className="form-content">
-            <header>Connexion Patient</header>
+            <header>Connexion Medecin</header>
 
             <form onSubmit={handleSubmit}>
-              {isError && <Alert variant="danger">{message}</Alert>}
-              {isSuccess && (
-                <Alert variant="success">
-                  Connecté avec succès, vous redirige maintenant...
-                </Alert>
+              {isError && (
+                <Alert variant="danger">{getErrorMessage(error)}</Alert>
               )}
+              {/* {isSuccess && <Alert variant="success">{data}</Alert>}
+              heeelooo */}
               <div className="field input-field">
                 <input
                   type="email"
@@ -67,7 +67,6 @@ function PatientLogin() {
                   }
                 />
               </div>
-
               <div className="field input-field">
                 <div className="eye-icon" onClick={showPassword}>
                   {/* {visible ? <FaEyeSlash /> : <FaEye />} */}
@@ -85,13 +84,11 @@ function PatientLogin() {
                   }
                 />
               </div>
-
               <div className="form-link">
                 <a href="#" className="forgot-pass">
                   Forgot password ?
                 </a>
               </div>
-
               <div className="field">
                 <button className="btn-primary" disabled={isLoading}>
                   {isLoading ? (
@@ -106,30 +103,11 @@ function PatientLogin() {
                 </button>
               </div>
             </form>
-            <div className="form-link">
-              <span>
-                doesn't have account ?{" "}
-                <a href="/register" className="link signup-link">
-                  {" "}
-                  Sign Up
-                </a>
-              </span>
-            </div>
-          </div>
-          <div className="line"></div>
-
-          <div className="media-options">
-            <a href="#" className="field google">
-              <div className="google-icon">
-                <box-icon type="logo" name="google" color="#2da77e"></box-icon>
-              </div>
-              <span>Login with google</span>
-            </a>
           </div>
         </div>
       </section>
     </div>
   );
-}
+};
 
-export default PatientLogin;
+export default MedecinLogin;

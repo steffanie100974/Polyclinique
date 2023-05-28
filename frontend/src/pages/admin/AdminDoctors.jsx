@@ -22,9 +22,10 @@ import DeleteDoctorModal from "../../components/DeleteDoctorModal";
 import ResetMedecinPWModal from "../../components/ResetMedecinPWModal";
 
 const AdminDoctors = () => {
-  const { user } = useUserContext();
+  const { userToken } = useUserContext();
+  console.log("admin token", userToken);
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryFn: () => getMedecins(user.token),
+    queryFn: () => getMedecins(userToken),
     queryKey: ["doctors"],
     onSuccess: (data) => setMedecins(data),
   });
@@ -100,7 +101,7 @@ const AdminDoctors = () => {
     <Container className="py-4">
       <h3 className="mb-3">Medecins:</h3>
       {isLoading && <Alert variant="info">Chargements des medecins...</Alert>}
-      {isError && <Alert variant="info">{getErrorMessage(error)}</Alert>}
+      {isError && <Alert variant="danger">{getErrorMessage(error)}</Alert>}
       {medecins && (
         <>
           <Row className="mb-4">

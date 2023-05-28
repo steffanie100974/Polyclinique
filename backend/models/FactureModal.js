@@ -2,9 +2,9 @@ const mongoose = require("mongoose");
 
 const factureSchema = mongoose.Schema(
   {
-    rdvID: {
+    rdv: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "rendez-vous",
+      ref: "rendezvous",
       required: true,
     },
     price: {
@@ -23,6 +23,6 @@ const factureSchema = mongoose.Schema(
   { timestamps: true }
 );
 
-const Facture = mongoose.model("facture", factureSchema);
+const Facture = mongoose.model("factures", factureSchema);
 
 module.exports = Facture;

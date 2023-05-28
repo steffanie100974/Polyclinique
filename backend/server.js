@@ -5,6 +5,7 @@ const cors = require("cors");
 
 const PORT = process.env.PORT;
 const departmentRoutes = require("./routes/department.routes");
+const ordonnanceRoutes = require("./routes/ordonnance.routes");
 
 const DB = require("./DB/conn");
 
@@ -21,7 +22,7 @@ app.use("/patient", require("./routes/patient.routes"));
 app.use("/medecin", require("./routes/medecin.routes"));
 app.use("/rendezvous", require("./routes/rdv.routes"));
 app.use("/factures", require("./routes/facture.routes"));
-app.use("/service", require("./routes/service.routes"));
+app.use("/ordonnances", ordonnanceRoutes);
 app.use("/departments", departmentRoutes);
 
 app.listen(PORT, () => console.log(`server is running on port ${PORT}`));

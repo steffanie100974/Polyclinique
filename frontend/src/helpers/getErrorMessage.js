@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 
-export function getErrorMessage(error) {
+const getErrorMessage = (error) => {
   if (error instanceof AxiosError) {
     if (error.response) {
       if (error.response.data && error.response.data.message) {
@@ -14,4 +14,6 @@ export function getErrorMessage(error) {
   } else {
     return "An unknown error occurred";
   }
-}
+};
+
+export { getErrorMessage };

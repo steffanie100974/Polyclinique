@@ -1,107 +1,67 @@
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
 import Table from "react-bootstrap/Table";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Alert } from "react-bootstrap";
-import formatDate from "../utilities/formatDate";
+import formatDate from "../helpers/formatDate";
+import { useUserContext } from "../contexts/useUserContext";
+import { useQuery } from "@tanstack/react-query";
+import { getErrorMessage } from "../helpers/getErrorMessage";
+import { getPatientFactures } from "../api/facture";
 
 const PatientFactures = () => {
-  const { user } = useSelector((state) => state.auth);
-  const [isLoadingFactures, setIsLoadingFactures] = useState(false);
-  const [error, setError] = useState("");
-  const [patientFactures, setPatientFactures] = useState(null);
-  useEffect(() => {
-    getPatientFactures();
-  }, []);
-  useEffect(() => {
-    console.log("patientFactures", patientFactures);
-  }, [patientFactures]);
-  const getPatientFactures = async (isPaid = false) => {
-    try {
-      setError("");
-      setIsLoadingFactures(true);
-      const response = await axios.get(
-        `http://localhost:3001/patient/factures?paid=${isPaid}`,
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
-      const data = response.data;
-      console.log("daata ", data);
-      setPatientFactures(data);
-    } catch (error) {
-      if (error.response.status === 404) {
-        setError("Vous avez 0 factures");
-      } else {
-        setError(
-          "une erreur s'est produite lors de la récupération des factures"
-        );
-      }
+  const { userToken } = useUserContext();
 
-      console.log("errrooor", error);
-    } finally {
-      setIsLoadingFactures(false);
-    }
-  };
-  if (isLoadingFactures) {
-    return (
-      <section className="mt-4">
-        <h3>Mes factures impayées</h3>
-        <Alert variant="info">Chargement de vos factures impayées...</Alert>
-      </section>
-    );
-  }
-  if (!patientFactures) {
-    return (
-      <section className="mt-4">
-        <h3>Mes factures impayées</h3>
-        <Alert variant="info">{error}</Alert>
-      </section>
-    );
-  }
+  const {
+    data: factures,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryFn: () => getPatientFactures(userToken, false),
+    queryKey: ["patient-factures", { isPaid: false }],
+  });
+
   return (
     <section className="mt-4">
       <h3>Mes factures impayées</h3>
-      <Table striped bordered>
-        <thead>
-          <tr>
-            <th>Date de RDV</th>
-            <th>Medecin Nom</th>
-            <th>Type de service</th>
-            <th>Frais</th>
-            <th>Date Limite</th>
-          </tr>
-        </thead>
-        <tbody>
-          {isLoadingFactures && (
-            <tr>
-              <td>Loading...</td>
-            </tr>
-          )}
-          {error && (
-            <tr>
-              <td>
-                <Alert variant="danger">{error}</Alert>
-              </td>
-            </tr>
-          )}
-          {patientFactures.map((facture) => (
-            <tr key={facture._id}>
-              <td>{formatDate(facture.date)}</td>
-              <td>
-                {facture.medecinFirstName} {facture.medecinLastName}
-              </td>
-              <td>{facture.typeService}</td>
-              <td>{facture.price} DH</td>
-              <td>{new Date(facture.deadline).toLocaleDateString("fr-FR")}</td>
-            </tr>
-          ))}
-        </tbody>
-      </Table>
+      {isLoading && (
+        <Alert variant="info">Chargement de vos factures impayées...</Alert>
+      )}
+      {isError && <Alert variant="danger">{getErrorMessage(error)}</Alert>}
+
+      {factures &&
+        (factures.length > 0 ? (
+          <Table striped bordered>
+            <thead>
+              <tr>
+                <th>Date de RDV</th>
+                <th>Medecin</th>
+                <th>Est payé</th>
+                <th>Frais</th>
+                <th>Date limite de paiement</th>
+              </tr>
+            </thead>
+            <tbody>
+              {factures.map((facture) => (
+                <tr key={facture._id}>
+                  <td>{formatDate(facture.rdv.date)}</td>
+                  <td>
+                    {facture.rdv.medecin.firstName}{" "}
+                    {facture.rdv.medecin.lastName}
+                  </td>
+                  <td style={{ color: facture.isPaid ? "green" : "red" }}>
+                    {facture.isPaid ? "Oui" : "Non"}
+                  </td>
+                  <td>{facture.price} DH</td>
+                  <td>
+                    {new Date(facture.deadline).toLocaleDateString("fr-FR")}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <Alert variant="info">Vous n'avez aucune facture impayée</Alert>
+        ))}
     </section>
   );
 };

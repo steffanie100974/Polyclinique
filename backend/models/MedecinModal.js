@@ -37,7 +37,7 @@ const medecinSchema = mongoose.Schema({
   },
   department: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "departement",
+    ref: "departements",
     required: true,
   },
   dateOfBirth: {
@@ -46,6 +46,6 @@ const medecinSchema = mongoose.Schema({
   },
 });
 
-const Medecin = mongoose.model("medecin", medecinSchema);
+const Medecin = mongoose.model("medecins", medecinSchema);
 
 module.exports = Medecin;

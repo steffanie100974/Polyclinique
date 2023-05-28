@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const ordonnanceSchema = mongoose.Schema({
-  medecinID: {
+  medecin: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "medecins",
     required: true,
   },
-  patientID: {
+  patient: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "patients",
     required: true,

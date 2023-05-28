@@ -1,18 +1,19 @@
 import React, { useState } from "react";
-import formatDate from "../utilities/formatDate";
+import formatDate from "../helpers/formatDate";
 import { Alert, Button, Form, Modal } from "react-bootstrap";
 import axios from "axios";
-import { useSelector } from "react-redux";
 import DatePicker from "react-datepicker";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { toast } from "react-toastify";
+import { useUserContext } from "../contexts/useUserContext";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { postFacture } from "../api/facture";
+import { getErrorMessage } from "../helpers/getErrorMessage";
 
-const SingleMedecinPastRDV = ({ rdv, setFactures }) => {
-  const { user } = useSelector((state) => state.auth);
-  const [isPostingFacture, setIsPostingFacture] = useState(false);
-  const [error, setError] = useState("");
-
+const SingleMedecinRDVRow = ({ rdv }) => {
+  const { userToken } = useUserContext();
+  const queryClient = useQueryClient();
   // modal States
   const [isModalShown, setIsModalShown] = useState(false);
   const [price, setPrice] = useState(0);
@@ -20,54 +21,38 @@ const SingleMedecinPastRDV = ({ rdv, setFactures }) => {
     new Date(Date.now() + 10 * 24 * 60 * 60 * 1000)
   );
 
-  const postFacture = async (e) => {
-    e.preventDefault();
-    try {
-      setError("");
-      setIsPostingFacture(true);
-      const response = await axios.post(
-        "http://localhost:3001/factures",
-        { price, deadline, rdvID: rdv._id },
-        {
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
-      console.log("rdv id", rdv._id);
-      toast.success("Facture envoyée avec succès");
-      setFactures((prevFactures) => [
-        ...prevFactures,
-        {
-          _id: response.data._id,
-          price,
-          deadline,
-          createdAt: response.data.createdAt,
-          rdv: {
-            _id: rdv._id,
-            patientID: {
-              firstName: rdv.patientID.firstName,
-              lastName: rdv.patientID.lastName,
-            },
-          },
-        },
-      ]);
-      setIsPostingFacture(false);
+  const {
+    mutate: mutateFactures,
+    isLoading: isPostingFacture,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: (factureData) => postFacture(factureData, userToken),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries(["factures"]);
+      toast.success("Facture envoyé avec success");
+      console.log("success post facture", data);
+      setPrice(0);
       setIsModalShown(false);
-    } catch (error) {
-      setError(error.response.data.message);
-    } finally {
-      setIsPostingFacture(false);
-    }
+    },
+    onError: (error) => console.log("error post facture", error),
+  });
+
+  const handlePostFacture = async (e) => {
+    e.preventDefault();
+    if (!price) return;
+
+    const factureData = { price, deadline, rdv: rdv._id };
+    mutateFactures(factureData);
   };
   return (
     <>
       <tr className="mt-3">
         <td>{formatDate(rdv.date)}</td>
-        <td>{rdv.typeService}</td>
         <td>
-          {rdv.patientID.firstName} {rdv.patientID.lastName}
+          {rdv.patient.firstName} {rdv.patient.lastName}
         </td>
+        <td>{rdv.patient.phone}</td>
         <td>
           <Button variant="secondary" onClick={() => setIsModalShown(true)}>
             Facturer
@@ -80,14 +65,16 @@ const SingleMedecinPastRDV = ({ rdv, setFactures }) => {
         <Modal.Header closeButton>
           <Modal.Title>Facturer un patient</Modal.Title>
         </Modal.Header>
-        <Form className="mt-0" onSubmit={postFacture}>
+        <Form className="mt-0" onSubmit={handlePostFacture}>
           <Modal.Body>
-            {error && <Alert variant="danger">{error}</Alert>}
+            {isError && (
+              <Alert variant="danger">{getErrorMessage(error)}</Alert>
+            )}
             <Form.Group>
               <Form.Label>Patient:</Form.Label>
               <Form.Control
                 disabled
-                value={`${rdv.patientID.firstName} ${rdv.patientID.lastName}`}
+                value={`${rdv.patient.firstName} ${rdv.patient.lastName}`}
               />
             </Form.Group>
             <Form.Group className="my-3">
@@ -133,4 +120,4 @@ const SingleMedecinPastRDV = ({ rdv, setFactures }) => {
   );
 };
 
-export default SingleMedecinPastRDV;
+export default SingleMedecinRDVRow;

@@ -27,7 +27,7 @@ import { addDoctor } from "../../api/admin";
 import { useUserContext } from "../../contexts/useUserContext";
 
 const AddDoctor = () => {
-  const { user } = useUserContext();
+  const { userToken } = useUserContext();
   const [doctor, setDoctor] = useState({
     firstName: "",
     lastName: "",
@@ -48,7 +48,7 @@ const AddDoctor = () => {
   });
 
   const { mutate, isLoading, isSuccess, isError, data, error } = useMutation({
-    mutationFn: () => addDoctor(doctor, user.token),
+    mutationFn: () => addDoctor(doctor, userToken),
     onSuccess: () =>
       setDoctor({
         firstName: "",

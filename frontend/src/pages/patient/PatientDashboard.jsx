@@ -1,19 +1,13 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import "../../css/PatientDashboard.css";
 import RendezvousCard from "../../components/RendezvousCard";
 import PatientFactures from "../../components/PatientFactures";
-import PatientOrdonnances from "../../components/PatientOrdonnances";
+import PatientOrdonnancesList from "../../components/PatientOrdonnancesList";
 const PatientDashboard = () => {
-  const { user, isLoading, isError, isSuccess, message } = useSelector(
-    (state) => state.auth
-  );
-
   return (
-    <div className="patient-dashboard">
+    <div className="p-4">
       <RendezvousCard />
       <PatientFactures />
-      <PatientOrdonnances />
+      <PatientOrdonnancesList />
     </div>
   );
 };

@@ -4,6 +4,7 @@ const {
   deleteFacture,
 } = require("../controllers/facture.controller");
 const medecinAuth = require("../Middleware/medecinAuthMiddleware");
+const patientAuth = require("../Middleware/patientAuthMiddleware");
 const route = express.Router();
 
 route.post("/", medecinAuth, postFacture);

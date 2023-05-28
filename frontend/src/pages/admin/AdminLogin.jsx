@@ -10,14 +10,14 @@ import { getErrorMessage } from "../../helpers/getErrorMessage";
 import { useUserContext } from "../../contexts/useUserContext";
 import { useNavigate } from "react-router-dom";
 const AdminLogin = () => {
-  const { saveUser } = useUserContext();
+  const { saveUserToken } = useUserContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
-  const { mutate, isLoading, isError, error, data, isSuccess } = useMutation({
+  const { mutate, isLoading, isError, error, isSuccess } = useMutation({
     mutationFn: () => adminLogin(email, password),
     onSuccess: (data) => {
-      saveUser(data);
+      saveUserToken(data);
       navigate("/admin/dashboard");
     },
     onError: (error) => console.log("error login", getErrorMessage(error)),

@@ -7,6 +7,59 @@ const RDV = require("../models/rendezVous.modal");
 const Medecin = require("../models/MedecinModal");
 const Ordonnance = require("../models/OrdonnanceModal");
 
+const getMedecinPatients = AsyncHandler(async (req, res) => {
+  const { _id: medecinID } = req.medecin;
+
+  const now = new Date(); // get current date and time
+
+  const medecinRDVS = await RDV.aggregate([
+    { $match: { medecinID } }, // filter by medecinID
+    {
+      $group: {
+        _id: "$patientID", // group by patientID
+        rdvs: {
+          $push: {
+            _id: "$_id",
+            date: "$date",
+            heure: "$heure",
+            typeService: "$typeService",
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        rdvs: { $slice: ["$rdvs", -1] }, // select only the latest appointment
+      },
+    },
+    {
+      $lookup: {
+        from: "patients",
+        localField: "_id",
+        foreignField: "_id",
+        as: "patient",
+      },
+    }, // join with patients collection
+    { $unwind: "$patient" }, // destructure patient array
+    // { $match: { "rdvs.date": { $lte: new Date() } } }, // filter out appointments that have not yet occurred
+    { $sort: { "rdvs.date": -1 } }, // sort rdvs array by date in descending order
+  ]);
+
+  console.log("medecin rdvs", medecinRDVS);
+
+  const patients = medecinRDVS.map(({ patient, rdvs }) => {
+    console.log("rdvs", rdvs);
+    return {
+      patient,
+      rdv: rdvs[0],
+    };
+  });
+  // rename rdvs to rdv
+
+  console.log("patients", patients);
+
+  res.status(200).json(patients);
+});
 // get all patients
 const getAllPatients = AsyncHandler(async (req, res) => {
   try {
@@ -19,13 +72,20 @@ const getAllPatients = AsyncHandler(async (req, res) => {
   }
 });
 
+// get patient profile
+
+const getPatientProfile = (req, res) => {
+  return res.status(200).json(req.patient);
+};
+
 const register = AsyncHandler(async (req, res) => {
-  const { firstName, lastName, email, password, CIN, dateOfBirth } = req.body;
+  const { firstName, lastName, email, password, CIN, dateOfBirth, phone } =
+    req.body;
 
   const salt = await bcrypt.genSalt(10);
   const hashPassword = await bcrypt.hash(password, salt);
 
-  const patientExist = await Patient.findOne({ email });
+  const patientExist = await Patient.findOne({ email, phone });
 
   if (patientExist) {
     return res.status(409).json({ message: "Patient Already Exist" });
@@ -38,14 +98,11 @@ const register = AsyncHandler(async (req, res) => {
     password: hashPassword,
     CIN,
     dateOfBirth,
+    phone,
   });
   if (patient) {
-    const jsonData = JSON.stringify(patient);
-    const parsedMap = JSON.parse(jsonData);
-    return res.status(201).json({
-      ...parsedMap,
-      token: genToken(patient._id),
-    });
+    const token = genToken(patient._id);
+    return res.status(201).json(token);
   }
 });
 
@@ -62,90 +119,10 @@ const login = AsyncHandler(async (req, res) => {
   if (!matchingPassword)
     return res.status(401).json({ message: "Mot de passe incorrect" });
 
-  return res.status(200).json({
-    ...patient,
-    token: genToken(patient._id),
-  });
+  const token = genToken(patient._id);
+  return res.status(200).json(token);
 });
 
-// get patient factures
-const getPatientFactures = AsyncHandler(async (req, res) => {
-  const { _id: patientID } = req.patient;
-  // send request like this: localhost:3001/patient/factures?paid=false to get only unpaid factures, or send localhost:3001/patient/factures to get all factures
-  const { paid } = req.query;
-  try {
-    const patientRDVS = await RDV.find({ patientID });
-    if (patientRDVS.length === 0)
-      return res.status(404).json({
-        message:
-          "Vous n'avez aucune facture à payer car vous n'avez pris aucun rendez-vous",
-      });
-    let patientFactures = [];
-    for (let i = 0; i < patientRDVS.length; i++) {
-      const { _id, date, typeService, medecinID } = patientRDVS[i];
-      const medecin = await Medecin.findById(medecinID);
-
-      let facture;
-      if (paid) {
-        facture = await Facture.findOne({
-          rdvID: _id,
-          isPaid: paid,
-        });
-      } else {
-        facture = await Facture.findOne({
-          rdvID: _id,
-        });
-      }
-      if (facture) {
-        const patientFacture = {
-          _id: facture._id,
-          date,
-          typeService,
-          medecinFirstName: medecin.firstName,
-          medecinLastName: medecin.lastName,
-          price: facture.price,
-          deadline: facture.deadline,
-        };
-        patientFactures.push(patientFacture);
-      }
-    }
-
-    if (patientFactures.length === 0)
-      return res.status(404).json({ message: "Vous avez 0 factures" });
-
-    return res.status(200).json(patientFactures);
-  } catch (error) {
-    return res.status(500).json(error);
-  }
-});
-
-// get patient ordonnances
-const getPatientOrdonnances = AsyncHandler(async (req, res) => {
-  const { _id: patientID } = req.patient;
-  try {
-    const ordonnances = await Ordonnance.find({ patientID }).populate(
-      "medecinID",
-      "firstName lastName"
-    );
-
-    // let ordonnances;
-    // for (let i = 0; i < docs.length; i++) {
-    //   const { medecinID, date, description, medicaments } = docs[i];
-    //   const medecin = await Medecin.findById(medecinID);
-    //   const ordonnance = {
-    //     date,
-    //     description,
-    //     medicaments,
-    //     medecinFirstName: medecin.firstName,
-    //     medecinLastName: medecin.lastName,
-    //   };
-    //   ordonnances.push(ordonnance);
-    // }
-    res.status(200).json(ordonnances);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-});
 const restorePassword = AsyncHandler(async (req, res) => {});
 
 const genToken = (id) => {
@@ -154,7 +131,7 @@ const genToken = (id) => {
 module.exports = {
   register,
   login,
-  getPatientFactures,
-  getPatientOrdonnances,
   getAllPatients,
+  getMedecinPatients,
+  getPatientProfile,
 };

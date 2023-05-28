@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link, Navigate, Outlet } from "react-router-dom";
+import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
 import "../css/sidebar.css";
 import {
   faMoneyBill,
@@ -13,14 +13,26 @@ import {
   faCalendar,
   faUserNurse,
 } from "@fortawesome/free-solid-svg-icons";
-import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../features/auth/authSlice";
+import { useUserContext } from "../contexts/useUserContext";
+import { useQuery } from "@tanstack/react-query";
+import { getPatientProfile } from "../api/patient";
+import { Alert } from "react-bootstrap";
+import { getErrorMessage } from "../helpers/getErrorMessage";
 
 const Sidebar = () => {
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(true);
-  const { user } = useSelector((state) => state.auth);
-  const dispatch = useDispatch();
-  if (!user) return <Navigate to="/" />;
+  const { userToken, logout } = useUserContext();
+  if (!userToken) return <Navigate to="/" />;
+
+  const {
+    data: patient,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryFn: () => getPatientProfile(userToken),
+    queryKey: ["patient"],
+  });
   return (
     <>
       <div
@@ -35,7 +47,14 @@ const Sidebar = () => {
         </div>
         <ul className="nav-links">
           <li>
-            <a href="#">
+            <NavLink
+              to="/patient/dashboard"
+              style={({ isActive }) => {
+                return {
+                  backgroundColor: isActive ? "rgb(98, 98, 98)" : "transparent",
+                };
+              }}
+            >
               <div className="i-container">
                 <FontAwesomeIcon
                   className="i"
@@ -44,26 +63,37 @@ const Sidebar = () => {
                 />
               </div>
               <span className="link_name">Dashboard</span>
-            </a>
+            </NavLink>
           </li>
 
           <li>
-            <div className="icon-link">
-              <a href="#">
-                <div className="i-container">
-                  <FontAwesomeIcon
-                    className="i"
-                    icon={faMoneyBill}
-                    style={{ color: "white" }}
-                  />
-                </div>
-
-                <span className="link_name">Mes Factures</span>
-              </a>
-            </div>
+            <NavLink
+              to="/patient/factures"
+              style={({ isActive }) => {
+                return {
+                  backgroundColor: isActive ? "rgb(98, 98, 98)" : "transparent",
+                };
+              }}
+            >
+              <div className="i-container">
+                <FontAwesomeIcon
+                  className="i"
+                  icon={faMoneyBill}
+                  style={{ color: "white" }}
+                />
+              </div>
+              <span className="link_name">Mes Factures</span>
+            </NavLink>
           </li>
           <li>
-            <a href="#">
+            <NavLink
+              to="/patient/ordonnances"
+              style={({ isActive }) => {
+                return {
+                  backgroundColor: isActive ? "rgb(98, 98, 98)" : "transparent",
+                };
+              }}
+            >
               <div className="i-container">
                 <FontAwesomeIcon
                   className="i"
@@ -73,10 +103,17 @@ const Sidebar = () => {
               </div>
 
               <span className="link_name">Mes Ordonnonces</span>
-            </a>
+            </NavLink>
           </li>
           <li>
-            <a href="#">
+            <NavLink
+              to="/patient/rendezvous"
+              style={({ isActive }) => {
+                return {
+                  backgroundColor: isActive ? "rgb(98, 98, 98)" : "transparent",
+                };
+              }}
+            >
               <div className="i-container">
                 <FontAwesomeIcon
                   className="i"
@@ -85,26 +122,8 @@ const Sidebar = () => {
                 />
               </div>
 
-              <span className="link_name">Prenez rendez vous</span>
-            </a>
-          </li>
-          <li>
-            <div className="icon-link">
-              <a href="#">
-                <div className="i-container">
-                  <FontAwesomeIcon
-                    className="i"
-                    icon={faUserNurse}
-                    style={{ color: "white" }}
-                  />
-                </div>
-
-                <span className="link_name">Medecins</span>
-              </a>
-              {/* <div className="i-container">
-                <FontAwesomeIcon className="i arrow" icon={faChevronDown} />
-              </div> */}
-            </div>
+              <span className="link_name">Mes rendez-vous</span>
+            </NavLink>
           </li>
         </ul>
         <div className="profile-details">
@@ -113,7 +132,13 @@ const Sidebar = () => {
           </div>
           <div className="name-job">
             <div className="profile_name">
-              {user.firstName} {user.lastName}
+              {isLoading && (
+                <Alert variant="info">Chargement de votre nom et prenom</Alert>
+              )}
+              {isError && (
+                <Alert variant="error">{getErrorMessage(error)}</Alert>
+              )}
+              {patient && `${patient.firstName} ${patient.lastName}`}
             </div>
           </div>
           <button
@@ -122,7 +147,7 @@ const Sidebar = () => {
               border: "none",
               outline: "none",
             }}
-            onClick={() => dispatch(logout())}
+            onClick={logout}
             className="i-container"
           >
             <FontAwesomeIcon

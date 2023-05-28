@@ -11,18 +11,20 @@ import {
   faStethoscope,
   faUserDoctor,
 } from "@fortawesome/free-solid-svg-icons";
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../helpers/getErrorMessage";
 
 const DoctorPage = () => {
-  const { user } = useUserContext();
+  const { userToken } = useUserContext();
   const { id: doctorID } = useParams();
   const {
     data: doctor,
-    isError,
-    error,
+
     isLoading,
   } = useQuery({
-    queryFn: () => getDoctor(doctorID, user.token),
+    queryFn: () => getDoctor(doctorID, userToken),
     queryKey: ["doctors", doctorID],
+    onError: (error) => toast.error(getErrorMessage(error)),
   });
   console.log("pramas", doctorID);
 

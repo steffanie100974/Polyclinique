@@ -8,9 +8,11 @@ import Logo from "../assets/logo.svg";
 import "../scss/layouts/Navbar.scss";
 
 import { Link, NavLink, Outlet } from "react-router-dom";
+import { useUserContext } from "../contexts/useUserContext";
 
 function PublicNav() {
   const [openNav, setOpenNav] = useState(false);
+  const { user } = useUserContext();
   return (
     <>
       <nav className="navbar container">

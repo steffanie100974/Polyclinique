@@ -1,13 +1,13 @@
 import React from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { Alert } from "react-bootstrap";
-import "../css/medecinCalendar.css";
-import { useUserContext } from "../contexts/useUserContext";
-import { getMedecinRDVS } from "../api/rendezvous";
+import { Alert, Container } from "react-bootstrap";
+import "../../css/medecinCalendar.css";
+import { useUserContext } from "../../contexts/useUserContext";
+import { getMedecinRDVS } from "../../api/rendezvous";
 import { useQuery } from "@tanstack/react-query";
-import { getErrorMessage } from "../helpers/getErrorMessage";
-const MedecinCalendar = () => {
+import { getErrorMessage } from "../../helpers/getErrorMessage";
+const DoctorCalendarPage = () => {
   const { userToken } = useUserContext();
   console.log("medecin token", userToken);
   const {
@@ -27,7 +27,7 @@ const MedecinCalendar = () => {
     }));
 
   return (
-    <>
+    <Container className="py-3">
       <h3>Calendrier</h3>
       {isLoading && <Alert variant="info">Loading your calendar...</Alert>}
       {isError && <Alert variant="info">{getErrorMessage(error)}</Alert>}
@@ -36,8 +36,8 @@ const MedecinCalendar = () => {
         initialView="dayGridMonth"
         events={events}
       />
-    </>
+    </Container>
   );
 };
 
-export default MedecinCalendar;
+export default DoctorCalendarPage;
