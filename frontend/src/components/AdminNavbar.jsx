@@ -9,7 +9,7 @@ import { faUserCircle } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "../contexts/useUserContext";
 const AdminNavbar = () => {
   const { logout, userToken } = useUserContext();
-
+  if (!userToken) return <Navigate to="/" />;
   return (
     <>
       <Navbar className="mt-0" bg="light" expand="lg">
@@ -34,6 +34,30 @@ const AdminNavbar = () => {
                     to="/admin/medecins"
                   >
                     Medecins
+                  </NavLink>
+                  <NavLink
+                    className={(isActive) =>
+                      "nav-link" + (isActive ? "" : " text-primary")
+                    }
+                    to="/admin/patients"
+                  >
+                    Patients
+                  </NavLink>
+                  <NavLink
+                    className={(isActive) =>
+                      "nav-link" + (isActive ? "" : " text-primary")
+                    }
+                    to="/admin/rendezvous"
+                  >
+                    Rendez Vous
+                  </NavLink>
+                  <NavLink
+                    className={(isActive) =>
+                      "nav-link" + (isActive ? "" : " text-primary")
+                    }
+                    to="/admin/factures"
+                  >
+                    Archive des factures
                   </NavLink>
 
                   <NavDropdown

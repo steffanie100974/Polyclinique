@@ -37,6 +37,7 @@ const MedecinFacturesTable = () => {
                 <th>Date de facturation</th>
                 <th>Est payée</th>
                 <th>Date limite de paiement</th>
+                <th>Imprimer</th>
                 <th>Supprimer</th>
               </tr>
             </thead>

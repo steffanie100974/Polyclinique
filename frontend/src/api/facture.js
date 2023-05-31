@@ -57,3 +57,40 @@ export const updateDoctorFacture = async (factureID, newData, doctorToken) => {
 
   return response.data;
 };
+
+export const getAdminPatientFactures = async (
+  idPatient,
+  adminToken,
+  isPaid
+) => {
+  const endpoint =
+    isPaid === undefined
+      ? `/patient/${idPatient}/factures`
+      : `/patient/${idPatient}/factures?isPaid=${isPaid}`;
+  const response = await api.get(endpoint, {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+  return response.data;
+};
+
+export const getFacture = async (factureID, userToken) => {
+  const response = await api.get(`/factures/${factureID}`, {
+    headers: {
+      Authorization: `Bearer ${userToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const getAllFactures = async (adminToken) => {
+  const response = await api.get("/factures", {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+
+  return response.data;
+};

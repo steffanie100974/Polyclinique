@@ -7,7 +7,6 @@ import {
 import "./css/resets.css";
 import PublicNav from "./components/PublicNav";
 import Landing from "./pages/public/landing/Landing";
-import Department from "./pages/public/department/Department";
 import { ToastContainer } from "react-toastify";
 import Sidebar from "./components/Sidebar";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -37,6 +36,12 @@ import MedecinNavbar from "./components/MedecinNavbar";
 import PatientFacturesPage from "./pages/patient/PatientFacturesPage";
 import DoctorCalendarPage from "./pages/medecin/DoctorCalendarPage";
 import DoctorProfile from "./pages/medecin/DoctorProfile";
+import AdminPatients from "./pages/admin/AdminPatients";
+import AdminPatient from "./pages/admin/AdminPatient";
+import AdminRendezVous from "./pages/admin/AdminRendezVous";
+import AdminProfile from "./pages/admin/AdminProfile";
+import FacturePage from "./pages/facture/FacturePage";
+import Factures from "./pages/facture/Factures";
 function App() {
   return (
     <div className="App">
@@ -45,12 +50,10 @@ function App() {
           {/* public routes */}
           <Route path="/" element={<PublicNav />}>
             <Route index element={<Landing />} />
+            <Route path="admin/login" element={<AdminLogin />} />
             <Route path="patient/signup" element={<PatientSignup />} />
             <Route path="patient/login" element={<PatientLogin />} />
             <Route path="medecin/login" element={<MedecinLogin />} />
-            <Route path="departements">
-              <Route path=":departmentName" element={<Department />} />
-            </Route>
           </Route>
 
           {/* patient routes */}
@@ -74,13 +77,25 @@ function App() {
 
           {/* admin routes */}
           <Route path="/admin" element={<AdminNavbar />}>
-            <Route index element={<AdminLogin />} />
+            <Route index element={<Navigate to="dashboard" />} />
             <Route path="dashboard" element={<AdminDashboard />} />
+
             <Route path="medecins" element={<AdminDoctors />} />
-            <Route path="ajouter-medecin" element={<AddDoctor />} />
             <Route path="medecins/:id" element={<DoctorPage />} />
-            {/* <Route path="ordonnances" element={<MedecinOrdonnances />} />
-            <Route path="factures" element={<MedecinFactures />} /> */}
+            <Route path="ajouter-medecin" element={<AddDoctor />} />
+
+            <Route path="patients" element={<AdminPatients />} />
+            <Route path="patients/:idPatient" element={<AdminPatient />} />
+
+            <Route path="rendezvous" element={<AdminRendezVous />} />
+
+            <Route path="profile" element={<AdminProfile />} />
+
+            <Route path="factures" element={<Factures />} />
+          </Route>
+
+          <Route path="/factures">
+            <Route path=":factureID" element={<FacturePage />} />
           </Route>
         </Routes>
         <ToastContainer />

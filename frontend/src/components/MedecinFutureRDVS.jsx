@@ -1,10 +1,16 @@
-import React from "react";
-import { Alert, Card } from "react-bootstrap";
+import React, { useState } from "react";
+import { Alert, Button, Card } from "react-bootstrap";
 import formatDate from "../helpers/formatDate";
 import { useUserContext } from "../contexts/useUserContext";
 import { getMedecinFutureRDVS } from "../api/rendezvous";
 import { useQuery } from "@tanstack/react-query";
 import { getErrorMessage } from "../helpers/getErrorMessage";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronDown,
+  faChevronUp,
+  faPhone,
+} from "@fortawesome/free-solid-svg-icons";
 
 const MedecinFutureRDVS = () => {
   const { userToken } = useUserContext();
@@ -18,6 +24,8 @@ const MedecinFutureRDVS = () => {
     queryFn: () => getMedecinFutureRDVS(userToken),
     queryKey: ["rendezvous", { future: true }],
   });
+
+  const [rdvPhoneToShow, setRdvPhoneToShow] = useState(null);
   return (
     <div>
       <h3>Mes futurs rendez-vous</h3>
@@ -38,6 +46,29 @@ const MedecinFutureRDVS = () => {
                     <p>
                       {rdv.patient.firstName} {rdv.patient.lastName}
                     </p>
+                    <Button
+                      variant="outline-secondary"
+                      onClick={() =>
+                        setRdvPhoneToShow((prevValue) =>
+                          prevValue == null ? rdv._id : null
+                        )
+                      }
+                    >
+                      Appeler{" "}
+                      <FontAwesomeIcon
+                        icon={
+                          rdvPhoneToShow == rdv._id
+                            ? faChevronUp
+                            : faChevronDown
+                        }
+                      />
+                    </Button>
+
+                    {rdvPhoneToShow == rdv._id && (
+                      <p>
+                        <FontAwesomeIcon icon={faPhone} /> {rdv.patient.phone}
+                      </p>
+                    )}
                   </Card.Body>
                 </Card>
               ))

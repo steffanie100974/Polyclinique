@@ -1,11 +1,12 @@
 import React from "react";
 import Table from "react-bootstrap/Table";
-import { Alert } from "react-bootstrap";
+import { Alert, Button } from "react-bootstrap";
 import formatDate from "../helpers/formatDate";
 import { useUserContext } from "../contexts/useUserContext";
 import { useQuery } from "@tanstack/react-query";
 import { getErrorMessage } from "../helpers/getErrorMessage";
 import { getPatientFactures } from "../api/facture";
+import { Link } from "react-router-dom";
 
 const PatientFactures = () => {
   const { userToken } = useUserContext();
@@ -38,6 +39,7 @@ const PatientFactures = () => {
                 <th>Est payé</th>
                 <th>Frais</th>
                 <th>Date limite de paiement</th>
+                <th>Imprimer</th>
               </tr>
             </thead>
             <tbody>
@@ -54,6 +56,15 @@ const PatientFactures = () => {
                   <td>{facture.price} DH</td>
                   <td>
                     {new Date(facture.deadline).toLocaleDateString("fr-FR")}
+                  </td>
+                  <td>
+                    <Button
+                      as={Link}
+                      to={`/factures/${facture._id}`}
+                      variant="outline-success"
+                    >
+                      Imprimer
+                    </Button>
                   </td>
                 </tr>
               ))}

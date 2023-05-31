@@ -9,7 +9,7 @@ import "react-bootstrap-typeahead/css/Typeahead.css";
 import { v4 as uuidv4 } from "uuid";
 import { toast } from "react-toastify";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAllPatients } from "../api/patient";
+import { getAllPatients, getDoctorPatients } from "../api/patient";
 import { useUserContext } from "../contexts/useUserContext";
 import { getErrorMessage } from "../helpers/getErrorMessage";
 import { postOrdonnance } from "../api/ordonnance";
@@ -23,7 +23,7 @@ const OrdonnanceForm = () => {
     isError,
     error,
   } = useQuery({
-    queryFn: () => getAllPatients(userToken),
+    queryFn: () => getDoctorPatients(userToken),
     queryKey: ["patients"],
   });
 

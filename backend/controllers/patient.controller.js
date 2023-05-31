@@ -6,6 +6,7 @@ const Facture = require("../models/FactureModal");
 const RDV = require("../models/rendezVous.modal");
 const Medecin = require("../models/MedecinModal");
 const Ordonnance = require("../models/OrdonnanceModal");
+const genToken = require("../utils/genToken");
 
 const getMedecinPatients = AsyncHandler(async (req, res) => {
   const { _id: medecinID } = req.medecin;
@@ -61,21 +62,33 @@ const getMedecinPatients = AsyncHandler(async (req, res) => {
   res.status(200).json(patients);
 });
 // get all patients
-const getAllPatients = AsyncHandler(async (req, res) => {
+const getAllPatients = async (req, res) => {
+  // res.status(200).json("get all patients");
   try {
     const patients = await Patient.find();
     res.status(200).json(patients);
   } catch (error) {
+    console.log("errorr get all patients", error);
     res.status(500).json(error);
-
-    console.log("errorr", error);
   }
+};
+
+const deletePatient = AsyncHandler(async (req, res) => {
+  const { patientID } = req.params;
+  await Patient.findByIdAndDelete(patientID);
+  return res.status(200).json({ message: "Patient supprimé avec success" });
 });
 
 // get patient profile
 
 const getPatientProfile = (req, res) => {
   return res.status(200).json(req.patient);
+};
+const getPatientData = async (req, res) => {
+  const { patientID } = req.params;
+  const patient = await Patient.findById(patientID);
+  if (!patient) return res.status(404).json({ message: "Patient introuvable" });
+  return res.status(200).json(patient);
 };
 
 const register = AsyncHandler(async (req, res) => {
@@ -101,7 +114,7 @@ const register = AsyncHandler(async (req, res) => {
     phone,
   });
   if (patient) {
-    const token = genToken(patient._id);
+    const token = genToken(patient._id, "patient");
     return res.status(201).json(token);
   }
 });
@@ -119,19 +132,18 @@ const login = AsyncHandler(async (req, res) => {
   if (!matchingPassword)
     return res.status(401).json({ message: "Mot de passe incorrect" });
 
-  const token = genToken(patient._id);
+  const token = genToken(patient._id, "patient");
   return res.status(200).json(token);
 });
 
 const restorePassword = AsyncHandler(async (req, res) => {});
 
-const genToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET);
-};
 module.exports = {
   register,
   login,
   getAllPatients,
   getMedecinPatients,
   getPatientProfile,
+  deletePatient,
+  getPatientData,
 };

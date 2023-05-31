@@ -67,7 +67,7 @@ const getMedecinFutureRDVS = async (req, res) => {
     const futureRDVS = await RDV.find({
       medecin: medecinID,
       date: { $gte: new Date() },
-    }).populate("patient", "lastName firstName");
+    }).populate("patient", "lastName firstName phone");
 
     return res.status(200).json(futureRDVS);
   } catch (error) {
@@ -76,7 +76,7 @@ const getMedecinFutureRDVS = async (req, res) => {
   }
 };
 const getMedecinRDVS = async (req, res) => {
-  const { _id: medecinID } = req.medecin;
+  const medecinID = req.medecin ? req.medecin._id : req.params.idDoctor;
   try {
     const rdvs = await RDV.find({
       medecin: medecinID,
@@ -89,12 +89,27 @@ const getMedecinRDVS = async (req, res) => {
   }
 };
 const getPatientRDVS = async (req, res) => {
-  const { _id: patientID } = req.patient;
+  const { idPatient } = req.params;
+  const patientIDToQuery = req.patient ? req.patient._id : idPatient;
   try {
     const rdvs = await RDV.find({
-      patient: patientID,
+      patient: patientIDToQuery,
     })
       .populate("medecin", "lastName firstName")
+      .sort({ date: 1 });
+
+    return res.status(200).json(rdvs);
+  } catch (error) {
+    console.log("erroor", error);
+    return res.status(500).json(error);
+  }
+};
+
+const getAllRDVS = async (req, res) => {
+  try {
+    const rdvs = await RDV.find()
+      .populate("medecin", "lastName firstName")
+      .populate("patient", "firstName lastName")
       .sort({ date: -1 });
 
     return res.status(200).json(rdvs);
@@ -105,6 +120,7 @@ const getPatientRDVS = async (req, res) => {
 };
 
 module.exports = {
+  getAllRDVS,
   getRDV,
   deleteRDV,
   addRDV,

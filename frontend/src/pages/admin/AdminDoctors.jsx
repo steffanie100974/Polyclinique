@@ -20,6 +20,7 @@ import { getDepartments } from "../../api/department";
 import { Link } from "react-router-dom";
 import DeleteDoctorModal from "../../components/DeleteDoctorModal";
 import ResetMedecinPWModal from "../../components/ResetMedecinPWModal";
+import { Helmet } from "react-helmet";
 
 const AdminDoctors = () => {
   const { userToken } = useUserContext();
@@ -98,114 +99,120 @@ const AdminDoctors = () => {
     setMedecins(filtered);
   };
   return (
-    <Container className="py-4">
-      <h3 className="mb-3">Medecins:</h3>
-      {isLoading && <Alert variant="info">Chargements des medecins...</Alert>}
-      {isError && <Alert variant="danger">{getErrorMessage(error)}</Alert>}
-      {medecins && (
-        <>
-          <Row className="mb-4">
-            <Col xs="12" md="6" lg="4">
-              <InputGroup className="mb-3">
-                <InputGroup.Text id="basic-addon1">
-                  <FontAwesomeIcon icon={faUserDoctor} />
-                </InputGroup.Text>
-                <Form.Control
-                  value={medecinNameToSearch}
-                  onChange={(e) => setMedecinNameToSearch(e.target.value)}
-                  placeholder="Rechercher par nom ou prénom..."
-                />
-              </InputGroup>
-            </Col>
-            <Col xs="12" md="6" lg="4">
-              <InputGroup className="mb-3">
-                <InputGroup.Text id="basic-addon1">
-                  <FontAwesomeIcon icon={faStethoscope} />
-                </InputGroup.Text>
-                <Form.Select
-                  value={departmentToFilterBy}
-                  onChange={(e) => setDepartmentToFilterBy(e.target.value)}
-                >
-                  <option value="Department">Departement</option>
-                  {departmentsData &&
-                    departmentsData.map((department) => (
-                      <option key={department._id} value={department._id}>
-                        {department.name}
-                      </option>
-                    ))}
-                </Form.Select>
-              </InputGroup>
-            </Col>
-            <Col
-              xs="12"
-              md="6"
-              lg="4"
-              className="d-flex justify-content-end align-items-start"
-            >
-              <Button as={Link} to="/admin/ajouter-medecin" variant="success">
-                Ajouter un medecin
-              </Button>
-            </Col>
-          </Row>
-          <Table responsive striped bordered>
-            <thead>
-              <tr>
-                <th>Prenom et nom</th>
-                <th>Email</th>
-                <th>Tel</th>
-                <th>Departement</th>
-                <th>Réinitialiser mot de passe</th>
-                <th>Supprimer</th>
-              </tr>
-            </thead>
-            <tbody>
-              {medecins.map((medecin) => (
-                <tr key={medecin._id}>
-                  <td>
-                    <Button
-                      variant="link"
-                      as={Link}
-                      to={`/admin/medecins/${medecin._id}`}
-                    >
-                      {medecin.firstName} {medecin.lastName}
-                    </Button>
-                  </td>
-                  <td>{medecin.email}</td>
-                  <td>{medecin.phone}</td>
-                  <td>{medecin.department.name}</td>
-                  <td>
-                    <Button
-                      variant="secondary"
-                      onClick={() => handleReset(medecin._id)}
-                    >
-                      Réinitialiser
-                    </Button>
-                  </td>
-                  <td>
-                    <Button
-                      variant="danger"
-                      onClick={() => handleDelete(medecin._id)}
-                    >
-                      Supprimer
-                    </Button>
-                  </td>
+    <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Doctors</title>
+      </Helmet>
+      <Container className="py-4">
+        <h3 className="mb-3">Medecins:</h3>
+        {isLoading && <Alert variant="info">Chargements des medecins...</Alert>}
+        {isError && <Alert variant="danger">{getErrorMessage(error)}</Alert>}
+        {medecins && (
+          <>
+            <Row className="mb-4">
+              <Col xs="12" md="6" lg="4">
+                <InputGroup className="mb-3">
+                  <InputGroup.Text id="basic-addon1">
+                    <FontAwesomeIcon icon={faUserDoctor} />
+                  </InputGroup.Text>
+                  <Form.Control
+                    value={medecinNameToSearch}
+                    onChange={(e) => setMedecinNameToSearch(e.target.value)}
+                    placeholder="Rechercher par nom ou prénom..."
+                  />
+                </InputGroup>
+              </Col>
+              <Col xs="12" md="6" lg="4">
+                <InputGroup className="mb-3">
+                  <InputGroup.Text id="basic-addon1">
+                    <FontAwesomeIcon icon={faStethoscope} />
+                  </InputGroup.Text>
+                  <Form.Select
+                    value={departmentToFilterBy}
+                    onChange={(e) => setDepartmentToFilterBy(e.target.value)}
+                  >
+                    <option value="Department">Departement</option>
+                    {departmentsData &&
+                      departmentsData.map((department) => (
+                        <option key={department._id} value={department._id}>
+                          {department.name}
+                        </option>
+                      ))}
+                  </Form.Select>
+                </InputGroup>
+              </Col>
+              <Col
+                xs="12"
+                md="6"
+                lg="4"
+                className="d-flex justify-content-end align-items-start"
+              >
+                <Button as={Link} to="/admin/ajouter-medecin" variant="success">
+                  Ajouter un medecin
+                </Button>
+              </Col>
+            </Row>
+            <Table responsive striped bordered>
+              <thead>
+                <tr>
+                  <th>Prenom et nom</th>
+                  <th>Email</th>
+                  <th>Tel</th>
+                  <th>Departement</th>
+                  <th>Réinitialiser mot de passe</th>
+                  <th>Supprimer</th>
                 </tr>
-              ))}
-            </tbody>
-          </Table>
-          <DeleteDoctorModal
-            id={doctorIDToDelete}
-            show={showDeleteModal}
-            setShow={setShowDeleteModal}
-          />
-          <ResetMedecinPWModal
-            id={doctorIDToReset}
-            show={showResetModal}
-            setShow={setShowResetModal}
-          />
-        </>
-      )}
-    </Container>
+              </thead>
+              <tbody>
+                {medecins.map((medecin) => (
+                  <tr key={medecin._id}>
+                    <td>
+                      <Button
+                        variant="link"
+                        as={Link}
+                        to={`/admin/medecins/${medecin._id}`}
+                      >
+                        {medecin.firstName} {medecin.lastName}
+                      </Button>
+                    </td>
+                    <td>{medecin.email}</td>
+                    <td>{medecin.phone}</td>
+                    <td>{medecin.department.name}</td>
+                    <td>
+                      <Button
+                        variant="secondary"
+                        onClick={() => handleReset(medecin._id)}
+                      >
+                        Réinitialiser
+                      </Button>
+                    </td>
+                    <td>
+                      <Button
+                        variant="danger"
+                        onClick={() => handleDelete(medecin._id)}
+                      >
+                        Supprimer
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </Table>
+            <DeleteDoctorModal
+              id={doctorIDToDelete}
+              show={showDeleteModal}
+              setShow={setShowDeleteModal}
+            />
+            <ResetMedecinPWModal
+              id={doctorIDToReset}
+              show={showResetModal}
+              setShow={setShowResetModal}
+            />
+          </>
+        )}
+      </Container>
+    </>
   );
 };
 

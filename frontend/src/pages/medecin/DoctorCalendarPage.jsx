@@ -7,6 +7,7 @@ import { useUserContext } from "../../contexts/useUserContext";
 import { getMedecinRDVS } from "../../api/rendezvous";
 import { useQuery } from "@tanstack/react-query";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
+import { Helmet } from "react-helmet";
 const DoctorCalendarPage = () => {
   const { userToken } = useUserContext();
   console.log("medecin token", userToken);
@@ -27,16 +28,22 @@ const DoctorCalendarPage = () => {
     }));
 
   return (
-    <Container className="py-3">
-      <h3>Calendrier</h3>
-      {isLoading && <Alert variant="info">Loading your calendar...</Alert>}
-      {isError && <Alert variant="info">{getErrorMessage(error)}</Alert>}
-      <FullCalendar
-        plugins={[dayGridPlugin]}
-        initialView="dayGridMonth"
-        events={events}
-      />
-    </Container>
+    <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Calendrier</title>
+      </Helmet>
+      <Container className="py-3">
+        <h3>Calendrier</h3>
+        {isLoading && <Alert variant="info">Loading your calendar...</Alert>}
+        {isError && <Alert variant="error">{getErrorMessage(error)}</Alert>}
+        <FullCalendar
+          plugins={[dayGridPlugin]}
+          initialView="dayGridMonth"
+          events={events}
+        />
+      </Container>
+    </>
   );
 };
 

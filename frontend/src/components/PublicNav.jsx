@@ -46,17 +46,7 @@ function PublicNav() {
                 Accueil
               </NavLink>
             </li>
-            <li className="menu-item dropdown">
-              <NavLink
-                className={({ isActive }) =>
-                  isActive ? "nav__link active" : "nav__link"
-                }
-                onClick={() => openNav(false)}
-                to="/departements"
-              >
-                Departements
-              </NavLink>
-            </li>
+
             <li className="menu-item dropdown">
               <NavLink
                 className={({ isActive }) =>

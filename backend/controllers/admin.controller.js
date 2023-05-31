@@ -2,6 +2,7 @@ const Admin = require("../models/AdminModal");
 const Medecin = require("../models/MedecinModal");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const genToken = require("../utils/genToken");
 
 const createAdmin = async (req, res) => {
   const { email, password } = req.body;
@@ -22,17 +23,11 @@ const createAdmin = async (req, res) => {
   }
 };
 
-const getAllMedecins = async (req, res) => {
-  try {
-    const medecins = await Medecin.find();
-    if (medecins.length == 0)
-      return res.status(404).json({ message: "Aucun médecin trouvé" });
-    res.status(200).json(medecins);
-  } catch (error) {
-    console.log("error get medecins", error);
-    res.status(500).json({ message: "Server error" });
-  }
+const getAdminProfile = async (req, res) => {
+  console.log("api admin profile hit");
+  return res.status(200).json(req.admin);
 };
+
 const adminLogin = async (req, res) => {
   const { email, password } = req.body;
   const admin = await Admin.findOne({ email })?.lean();
@@ -46,12 +41,57 @@ const adminLogin = async (req, res) => {
   if (!matchingPassword)
     return res.status(401).json({ message: "Mot de passe incorrect" });
 
-  const token = genToken(admin._id);
+  const token = genToken(admin._id, "admin");
   return res.status(200).json(token);
 };
 
-const genToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET);
+const updateAdminProfile = async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+  const { _id: adminID } = req.admin;
+
+  try {
+    let admin = await Admin.findById(adminID);
+
+    if (!admin) {
+      return res.status(404).json({ message: "Admin not found" });
+    }
+
+    // Update email profile field
+    admin.email = email;
+
+    if (currentPassword && newPassword) {
+      // Password change requested
+      const isPasswordMatch = await bcrypt.compare(
+        currentPassword,
+        admin.password
+      );
+
+      if (!isPasswordMatch) {
+        return res
+          .status(400)
+          .json({ message: "Mot de passe actuel incorrect" });
+      }
+
+      // Hash and update the new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      admin.password = hashedPassword;
+    }
+
+    // Save the updated admin profile
+    admin = await admin.save();
+
+    return res.json({ message: "Compte mis à jour avec succès", admin });
+  } catch (error) {
+    console.log("Error updating profile:", error);
+    return res.status(500).json({
+      message: "Une erreur s'est produite lors de la mise à jour du compte",
+    });
+  }
 };
 
-module.exports = { getAllMedecins, adminLogin, createAdmin };
+module.exports = {
+  adminLogin,
+  createAdmin,
+  getAdminProfile,
+  updateAdminProfile,
+};

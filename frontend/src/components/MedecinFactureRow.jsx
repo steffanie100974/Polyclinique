@@ -8,6 +8,7 @@ import { useUserContext } from "../contexts/useUserContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { deleteFacture, updateDoctorFacture } from "../api/facture";
 import { getErrorMessage } from "../helpers/getErrorMessage";
+import { Link } from "react-router-dom";
 
 const MedecinFactureRow = ({ facture }) => {
   const { userToken } = useUserContext();
@@ -56,6 +57,15 @@ const MedecinFactureRow = ({ facture }) => {
         </Form.Select>
       </td>
       <td>{formatDate(facture.deadline)}</td>
+      <td>
+        <Button
+          variant="outline-success"
+          as={Link}
+          to={`/factures/${facture._id}`}
+        >
+          Imprimer
+        </Button>
+      </td>
       <td>
         <Button
           disabled={isLoading}

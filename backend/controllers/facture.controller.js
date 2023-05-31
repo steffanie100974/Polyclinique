@@ -32,8 +32,8 @@ const deleteFacture = AsyncHandler(async (req, res) => {
 // get patient factures
 const getPatientFactures = AsyncHandler(async (req, res) => {
   console.log("api hit");
-  const { _id: patientID } = req.patient;
   const { isPaid } = req.query;
+  const patientID = req.patient ? req.patient._id : req.params.idPatient;
   const queryFilter =
     isPaid === undefined
       ? {
@@ -70,8 +70,6 @@ const getDoctorFactures = AsyncHandler(async (req, res) => {
     const factures = await Facture.find({
       rdv: { $in: await RDV.find({ medecin: medecinID }) },
     })
-      // .populate("rdv", "-factures") // Populate the RDV field excluding the factures
-      // .populate("rdv.medecin")
       .populate({
         path: "rdv",
         select: "-factures",
@@ -99,10 +97,58 @@ const updateFacture = async (req, res) => {
   }
 };
 
+const getFacture = AsyncHandler(async (req, res) => {
+  console.log("api hit");
+  const { factureID } = req.params;
+
+  try {
+    const facture = await Facture.findById(factureID)
+      .populate({
+        path: "rdv",
+        select: "-factures",
+        populate: [
+          { path: "patient", select: "firstName lastName phone email" },
+          { path: "medecin", select: "firstName lastName email phone" },
+        ],
+      })
+      .sort({ createdAt: -1 });
+
+    if (!facture)
+      return res.status(404).json({ message: "Facture non trouvé" });
+    return res.json(facture);
+  } catch (error) {
+    console.log("error get facture", error);
+    return res.status(500).json(error);
+  }
+});
+const getAllFactures = AsyncHandler(async (req, res) => {
+  console.log("api hit");
+
+  try {
+    const factures = await Facture.find()
+      .populate({
+        path: "rdv",
+        select: "-factures",
+        populate: [
+          { path: "patient", select: "firstName lastName phone email" },
+          { path: "medecin", select: "firstName lastName email phone" },
+        ],
+      })
+      .sort({ createdAt: -1 });
+
+    return res.json(factures);
+  } catch (error) {
+    console.log("error get all factures", error);
+    return res.status(500).json(error);
+  }
+});
+
 module.exports = {
   postFacture,
   deleteFacture,
   getPatientFactures,
   getDoctorFactures,
   updateFacture,
+  getFacture,
+  getAllFactures,
 };

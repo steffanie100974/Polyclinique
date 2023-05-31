@@ -11,6 +11,7 @@ import { useMutation } from "@tanstack/react-query";
 import { medecinLogin } from "../../api/medecin";
 import { useUserContext } from "../../contexts/useUserContext";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
+import { Helmet } from "react-helmet";
 
 const MedecinLogin = () => {
   const [visible, setVisible] = useState(false);
@@ -41,72 +42,79 @@ const MedecinLogin = () => {
   };
 
   return (
-    <div className="patient-login-page">
-      <section className="forms">
-        <div className="form login">
-          <div className="form-content">
-            <header>Connexion Medecin</header>
+    <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Polyclinique - Medecin se connecter</title>
+      </Helmet>
 
-            <form onSubmit={handleSubmit}>
-              {isError && (
-                <Alert variant="danger">{getErrorMessage(error)}</Alert>
-              )}
-              {/* {isSuccess && <Alert variant="success">{data}</Alert>}
+      <div className="patient-login-page">
+        <section className="forms">
+          <div className="form login">
+            <div className="form-content">
+              <header>Connexion Medecin</header>
+
+              <form onSubmit={handleSubmit}>
+                {isError && (
+                  <Alert variant="danger">{getErrorMessage(error)}</Alert>
+                )}
+                {/* {isSuccess && <Alert variant="success">{data}</Alert>}
               heeelooo */}
-              <div className="field input-field">
-                <input
-                  type="email"
-                  placeholder="email"
-                  className="input"
-                  value={formData.email}
-                  onChange={(e) =>
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      email: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="field input-field">
-                <div className="eye-icon" onClick={showPassword}>
-                  {/* {visible ? <FaEyeSlash /> : <FaEye />} */}
+                <div className="field input-field">
+                  <input
+                    type="email"
+                    placeholder="email"
+                    className="input"
+                    value={formData.email}
+                    onChange={(e) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        email: e.target.value,
+                      }))
+                    }
+                  />
                 </div>
-                <input
-                  type={!visible ? "password" : "text"}
-                  placeholder="password"
-                  className="password"
-                  value={formData.password}
-                  onChange={(e) =>
-                    setFormData((prevData) => ({
-                      ...prevData,
-                      password: e.target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="form-link">
-                <a href="#" className="forgot-pass">
-                  Forgot password ?
-                </a>
-              </div>
-              <div className="field">
-                <button className="btn-primary" disabled={isLoading}>
-                  {isLoading ? (
-                    <FontAwesomeIcon
-                      icon={faSpinner}
-                      spin
-                      style={{ color: "white" }}
-                    />
-                  ) : (
-                    "Se connecter"
-                  )}
-                </button>
-              </div>
-            </form>
+                <div className="field input-field">
+                  <div className="eye-icon" onClick={showPassword}>
+                    {/* {visible ? <FaEyeSlash /> : <FaEye />} */}
+                  </div>
+                  <input
+                    type={!visible ? "password" : "text"}
+                    placeholder="password"
+                    className="password"
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        password: e.target.value,
+                      }))
+                    }
+                  />
+                </div>
+                <div className="form-link">
+                  <a href="#" className="forgot-pass">
+                    Forgot password ?
+                  </a>
+                </div>
+                <div className="field">
+                  <button className="btn-primary" disabled={isLoading}>
+                    {isLoading ? (
+                      <FontAwesomeIcon
+                        icon={faSpinner}
+                        spin
+                        style={{ color: "white" }}
+                      />
+                    ) : (
+                      "Se connecter"
+                    )}
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+      </div>
+    </>
   );
 };
 

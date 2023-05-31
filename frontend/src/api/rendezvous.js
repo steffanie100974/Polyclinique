@@ -35,10 +35,39 @@ export const getMedecinRDVS = async (medecinToken) => {
 
   return response.data;
 };
+
+export const getAdminDoctorRDVS = async (idDoctor, adminToken) => {
+  const response = await api.get(`/rendezvous/medecin/${idDoctor}`, {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+
+  return response.data;
+};
 export const getPatientRDVS = async (patientToken) => {
   const response = await api.get("/patient/rdvs", {
     headers: {
       Authorization: `Bearer ${patientToken}`,
+    },
+  });
+
+  return response.data;
+};
+export const getAdminPatientRDVS = async (idPatient, adminToken) => {
+  const response = await api.get(`/patient/${idPatient}/rdvs`, {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const getAllRDVS = async (adminToken) => {
+  const response = await api.get("/rendezvous/all", {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
     },
   });
 

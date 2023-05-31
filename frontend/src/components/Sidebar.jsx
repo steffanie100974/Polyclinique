@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import logo from "../assets/logo.svg";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Link, NavLink, Navigate, Outlet } from "react-router-dom";
+import { Link, NavLink, Navigate, Outlet, useNavigate } from "react-router-dom";
 import "../css/sidebar.css";
 import {
   faMoneyBill,
@@ -22,6 +22,8 @@ import { getErrorMessage } from "../helpers/getErrorMessage";
 const Sidebar = () => {
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(true);
   const { userToken, logout } = useUserContext();
+  console.log("user token", userToken);
+  const navigate = useNavigate();
   if (!userToken) return <Navigate to="/" />;
 
   const {
@@ -147,7 +149,10 @@ const Sidebar = () => {
               border: "none",
               outline: "none",
             }}
-            onClick={logout}
+            onClick={() => {
+              logout();
+              navigate("/");
+            }}
             className="i-container"
           >
             <FontAwesomeIcon

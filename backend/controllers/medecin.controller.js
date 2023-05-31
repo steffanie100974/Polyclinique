@@ -1,10 +1,8 @@
 const AsyncHandler = require("express-async-handler");
-const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const Medecin = require("../models/MedecinModal");
-const Facture = require("../models/FactureModal");
-const Ordonnance = require("../models/OrdonnanceModal");
 const RDV = require("../models/rendezVous.modal");
+const genToken = require("../utils/genToken");
 
 const updateDoctorProfile = async (req, res) => {
   const { firstName, lastName, email, phone, currentPassword, newPassword } =
@@ -124,7 +122,7 @@ const login = AsyncHandler(async (req, res) => {
   if (!matchingPassword)
     return res.status(401).json({ message: "Mot de passe incorrect" });
 
-  const token = genToken(medecin._id);
+  const token = genToken(medecin._id, "medecin");
   return res.status(200).json(token);
 });
 
@@ -160,7 +158,8 @@ const getMedecinPastRDVS = AsyncHandler(async (req, res) => {
 const getDepartmentDoctors = AsyncHandler(async (req, res) => {
   const { departmentID } = req.params;
   console.log("department id", departmentID);
-  const doctors = await Medecin.find({ departmentID });
+
+  const doctors = await Medecin.find({ department: departmentID });
   return res.status(200).json(doctors);
 });
 
@@ -267,9 +266,6 @@ const getDoctor = AsyncHandler(async (req, res) => {
 });
 // ----------------------------> END OF MEDECIN CONTROLLERS THAT CAN BE ACCESSED ONLY BY ADMINS
 
-const genToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET);
-};
 module.exports = {
   register,
   login,

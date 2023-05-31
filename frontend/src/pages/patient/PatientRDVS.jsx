@@ -9,6 +9,7 @@ import formatDate from "../../helpers/formatDate";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet";
 
 const PatientRDVS = () => {
   const queryClient = useQueryClient();
@@ -36,106 +37,112 @@ const PatientRDVS = () => {
     ? rdvs.filter((rdv) => new Date(rdv.date) > new Date())
     : undefined;
   return (
-    <div className="p-4">
-      <RendezvousCard />
-      {isLoading && (
-        <Alert className="my-3" variant="info">
-          Chargement de vos rendez-vous...
-        </Alert>
-      )}
-      {isError && (
-        <Alert className="my-3" variant="danger">
-          {getErrorMessage(error)}
-        </Alert>
-      )}
-      {rdvs && (
-        <>
-          <div className="my-3">
-            <h3>Mes futurs rendez-vous</h3>
-            {!isLoading && isFetching && (
-              <FontAwesomeIcon icon={faSpinner} spin />
-            )}
+    <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Rendez vous</title>
+      </Helmet>
+      <div className="p-4">
+        <RendezvousCard />
+        {isLoading && (
+          <Alert className="my-3" variant="info">
+            Chargement de vos rendez-vous...
+          </Alert>
+        )}
+        {isError && (
+          <Alert className="my-3" variant="danger">
+            {getErrorMessage(error)}
+          </Alert>
+        )}
+        {rdvs && (
+          <>
+            <div className="my-3">
+              <h3>Mes futurs rendez-vous</h3>
+              {!isLoading && isFetching && (
+                <FontAwesomeIcon icon={faSpinner} spin />
+              )}
 
-            {futureRDVS &&
-              (futureRDVS.length > 0 ? (
-                <Table bordered responsive>
-                  <thead>
-                    <tr>
-                      <th>Medecin</th>
-                      <th>Date de rendez-vous</th>
-                      <th>Heure</th>
-                      <th>Date de reservation</th>
-                      <th>Annuler</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {futureRDVS.map((rdv) => (
-                      <tr key={rdv._id}>
-                        <td>
-                          {rdv.medecin.firstName} {rdv.medecin.lastName}
-                        </td>
-                        <td>{formatDate(rdv.date)}</td>
-                        <td>{rdv.hour}</td>
-                        <td>{formatDate(rdv.createdAt)}</td>
-                        <td>
-                          <Button
-                            variant="outline-warning"
-                            onClick={() => mutate(rdv._id)}
-                            disabled={isDeleting}
-                          >
-                            {isDeleting ? (
-                              <FontAwesomeIcon icon={faSpinner} spin />
-                            ) : (
-                              "Annuler"
-                            )}
-                          </Button>
-                        </td>
+              {futureRDVS &&
+                (futureRDVS.length > 0 ? (
+                  <Table bordered responsive>
+                    <thead>
+                      <tr>
+                        <th>Medecin</th>
+                        <th>Date de rendez-vous</th>
+                        <th>Heure</th>
+                        <th>Date de reservation</th>
+                        <th>Annuler</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                <Alert variant="info">
-                  Vos futurs rendez-vous seront listés ici
-                </Alert>
-              ))}
-          </div>
-          <div className="my-3">
-            <h3>Mes rendez-vous passés</h3>
-
-            {pastRDVS &&
-              (pastRDVS.length > 0 ? (
-                <Table striped bordered responsive>
-                  <thead>
-                    <tr>
-                      <th>Medecin</th>
-                      <th>Date de rendez-vous</th>
-                      <th>Date de reservation</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {futureRDVS.map((rdv) => (
-                      <tr key={rdv._id}>
-                        <Link to={`/patient/reservations/${rdv._id}`}>
+                    </thead>
+                    <tbody>
+                      {futureRDVS.map((rdv) => (
+                        <tr key={rdv._id}>
                           <td>
                             {rdv.medecin.firstName} {rdv.medecin.lastName}
                           </td>
                           <td>{formatDate(rdv.date)}</td>
+                          <td>{rdv.hour}</td>
                           <td>{formatDate(rdv.createdAt)}</td>
-                        </Link>
+                          <td>
+                            <Button
+                              variant="outline-warning"
+                              onClick={() => mutate(rdv._id)}
+                              disabled={isDeleting}
+                            >
+                              {isDeleting ? (
+                                <FontAwesomeIcon icon={faSpinner} spin />
+                              ) : (
+                                "Annuler"
+                              )}
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <Alert variant="info">
+                    Vos futurs rendez-vous seront listés ici
+                  </Alert>
+                ))}
+            </div>
+            <div className="my-3">
+              <h3>Mes rendez-vous passés</h3>
+
+              {pastRDVS &&
+                (pastRDVS.length > 0 ? (
+                  <Table striped bordered responsive>
+                    <thead>
+                      <tr>
+                        <th>Medecin</th>
+                        <th>Date de rendez-vous</th>
+                        <th>Date de reservation</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              ) : (
-                <Alert variant="info">
-                  Vos rendez-vous passés apparaîtront ici
-                </Alert>
-              ))}
-          </div>
-        </>
-      )}
-    </div>
+                    </thead>
+                    <tbody>
+                      {futureRDVS.map((rdv) => (
+                        <tr key={rdv._id}>
+                          <Link to={`/patient/reservations/${rdv._id}`}>
+                            <td>
+                              {rdv.medecin.firstName} {rdv.medecin.lastName}
+                            </td>
+                            <td>{formatDate(rdv.date)}</td>
+                            <td>{formatDate(rdv.createdAt)}</td>
+                          </Link>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                ) : (
+                  <Alert variant="info">
+                    Vos rendez-vous passés apparaîtront ici
+                  </Alert>
+                ))}
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

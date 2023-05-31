@@ -33,11 +33,42 @@ export const getMedecinPatients = async (medecinToken) => {
   return response.data;
 };
 
-export const getAllPatients = async (doctorPatient) => {
+export const getAllPatients = async (adminToken) => {
   const response = await api.get(`/patient/all`, {
     headers: {
-      Authorization: `Bearer ${doctorPatient}`,
+      Authorization: `Bearer ${adminToken}`,
     },
   });
+  return response.data;
+};
+
+export const getDoctorPatients = async (doctorToken) => {
+  const response = await api.get(`/medecin/patients`, {
+    headers: {
+      Authorization: `Bearer ${doctorToken}`,
+    },
+  });
+  return response.data;
+};
+
+// admin access only
+export const deletePatient = async (patientID, adminToken) => {
+  const response = await api.delete(`/patient/${patientID}`, {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+// admin access only
+export const getPatientData = async (patientID, adminToken) => {
+  const response = await api.get(`/patient/${patientID}`, {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+
   return response.data;
 };

@@ -12,9 +12,12 @@ const adminAuth = async (req, res, next) => {
         .json({ message: "Please send token with request" });
 
     const token = req.headers.authorization.split(" ")[1];
+    console.log("received admin token", token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log("decoded", decoded);
 
     if (!mongoose.Types.ObjectId.isValid(decoded.id)) {
+      console.log("token nooot valid");
       throw new Error("Invalid token");
     }
     const admin = await Admin.findById(decoded.id).select("-password");
@@ -27,6 +30,7 @@ const adminAuth = async (req, res, next) => {
       throw new Error("Token expired");
     }
     req.admin = admin;
+    console.log("will call next");
     next();
   } catch (error) {
     console.log("error", error);

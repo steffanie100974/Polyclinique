@@ -22,6 +22,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { patientSignup } from "../../api/patient";
 import { useUserContext } from "../../contexts/useUserContext";
 import { getErrorMessage } from "../../helpers/getErrorMessage";
+import { Helmet } from "react-helmet";
 
 const PatientSignup = () => {
   const { saveUserToken } = useUserContext();
@@ -65,165 +66,171 @@ const PatientSignup = () => {
   };
 
   return (
-    <Container
-      className="py-4 d-flex align-items-center justify-content-center"
-      style={{ minHeight: "100vh" }}
-    >
-      <Card style={{ width: 400, maxWidth: "100%" }}>
-        <Card.Header>
-          <Card.Title>Créer un compte</Card.Title>
-        </Card.Header>
-        <Card.Body>
-          {isError && <Alert variant="error">{getErrorMessage(error)}</Alert>}
-          <Form onSubmit={handleSubmit}>
-            <Row>
-              <Col>
-                <Form.Group>
-                  <Form.Label>Nom</Form.Label>
-                  <Form.Control
-                    value={formData.lastName}
-                    onChange={(e) =>
-                      setFormData((prevData) => ({
-                        ...prevData,
-                        lastName: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-              </Col>
-              <Col className="mt-2">
-                <Form.Group>
-                  <Form.Label>Prenom</Form.Label>
-                  <Form.Control
-                    value={formData.firstName}
-                    onChange={(e) =>
-                      setFormData((prevData) => ({
-                        ...prevData,
-                        firstName: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Row>
-              <Col className="mt-2" lg="6">
-                <Form.Group>
-                  <Form.Label>CIN</Form.Label>
-                  <Form.Control
-                    value={formData.CIN}
-                    onChange={(e) =>
-                      setFormData((prevData) => ({
-                        ...prevData,
-                        CIN: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-              </Col>
-              <Col className="mt-2" lg="6">
-                <Form.Group>
-                  <Form.Label>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) =>
-                      setFormData((prevData) => ({
-                        ...prevData,
-                        email: e.target.value,
-                      }))
-                    }
-                  />
-                </Form.Group>
-              </Col>
-            </Row>
-            <Form.Group className="mt-2">
-              <Form.Label>Date de naissance</Form.Label>
-              <Form.Control
-                type="date"
-                value={formData.dateOfBirth}
-                onChange={(e) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    dateOfBirth: e.target.value,
-                  }))
-                }
-              />
-            </Form.Group>
-            <Form.Group className="mt-2">
-              <Form.Label>Numero de telephone</Form.Label>
-              <Form.Control
-                type="tel"
-                value={formData.phone}
-                onChange={(e) =>
-                  setFormData((prevData) => ({
-                    ...prevData,
-                    phone: e.target.value,
-                  }))
-                }
-              />
-            </Form.Group>
-
-            <Form.Group className="mt-2">
-              <Form.Label>Mot de passe</Form.Label>
-              <InputGroup>
+    <>
+      <Helmet>
+        <meta charSet="utf-8" />
+        <title>Polyclinique - Patient s'inscrire</title>
+      </Helmet>
+      <Container
+        className="py-4 d-flex align-items-center justify-content-center"
+        style={{ minHeight: "100vh" }}
+      >
+        <Card style={{ width: 400, maxWidth: "100%" }}>
+          <Card.Header>
+            <Card.Title>Créer un compte</Card.Title>
+          </Card.Header>
+          <Card.Body>
+            {isError && <Alert variant="error">{getErrorMessage(error)}</Alert>}
+            <Form onSubmit={handleSubmit}>
+              <Row>
+                <Col>
+                  <Form.Group>
+                    <Form.Label>Nom</Form.Label>
+                    <Form.Control
+                      value={formData.lastName}
+                      onChange={(e) =>
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          lastName: e.target.value,
+                        }))
+                      }
+                    />
+                  </Form.Group>
+                </Col>
+                <Col className="mt-2">
+                  <Form.Group>
+                    <Form.Label>Prenom</Form.Label>
+                    <Form.Control
+                      value={formData.firstName}
+                      onChange={(e) =>
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          firstName: e.target.value,
+                        }))
+                      }
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Row>
+                <Col className="mt-2" lg="6">
+                  <Form.Group>
+                    <Form.Label>CIN</Form.Label>
+                    <Form.Control
+                      value={formData.CIN}
+                      onChange={(e) =>
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          CIN: e.target.value,
+                        }))
+                      }
+                    />
+                  </Form.Group>
+                </Col>
+                <Col className="mt-2" lg="6">
+                  <Form.Group>
+                    <Form.Label>Email</Form.Label>
+                    <Form.Control
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData((prevData) => ({
+                          ...prevData,
+                          email: e.target.value,
+                        }))
+                      }
+                    />
+                  </Form.Group>
+                </Col>
+              </Row>
+              <Form.Group className="mt-2">
+                <Form.Label>Date de naissance</Form.Label>
                 <Form.Control
-                  type={!visible ? "password" : "text"}
-                  value={formData.password}
+                  type="date"
+                  value={formData.dateOfBirth}
                   onChange={(e) =>
                     setFormData((prevData) => ({
                       ...prevData,
-                      password: e.target.value,
+                      dateOfBirth: e.target.value,
                     }))
                   }
                 />
-                <InputGroup.Text id="basic-addon2">
-                  <FontAwesomeIcon
-                    onClick={() => setVisible((prev) => !prev)}
-                    icon={visible ? faEyeSlash : faEye}
-                    color="black"
-                  />
-                </InputGroup.Text>
-              </InputGroup>
-            </Form.Group>
-            <Form.Group className="mt-2">
-              <Form.Label>Confirmation mot de passe</Form.Label>
-              <InputGroup>
+              </Form.Group>
+              <Form.Group className="mt-2">
+                <Form.Label>Numero de telephone</Form.Label>
                 <Form.Control
-                  type={!visible ? "password" : "text"}
-                  value={formData.confirmPassword}
+                  type="tel"
+                  value={formData.phone}
                   onChange={(e) =>
                     setFormData((prevData) => ({
                       ...prevData,
-                      confirmPassword: e.target.value,
+                      phone: e.target.value,
                     }))
                   }
                 />
-              </InputGroup>
-            </Form.Group>
+              </Form.Group>
 
-            <Button
-              disabled={isLoading}
-              className="d-block ms-auto mt-4"
-              variant="success"
-              type="submit"
-            >
-              {isLoading ? (
-                <FontAwesomeIcon icon={faSpinner} spin />
-              ) : (
-                "S'inscrire"
-              )}
-            </Button>
-          </Form>
-        </Card.Body>
-        <Card.Footer className="text-center">
-          Vous avez déja un compte?
-          <Link to="/patient/login" className="btn-link">
-            Se connecter
-          </Link>
-        </Card.Footer>
-      </Card>
-    </Container>
+              <Form.Group className="mt-2">
+                <Form.Label>Mot de passe</Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    type={!visible ? "password" : "text"}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        password: e.target.value,
+                      }))
+                    }
+                  />
+                  <InputGroup.Text id="basic-addon2">
+                    <FontAwesomeIcon
+                      onClick={() => setVisible((prev) => !prev)}
+                      icon={visible ? faEyeSlash : faEye}
+                      color="black"
+                    />
+                  </InputGroup.Text>
+                </InputGroup>
+              </Form.Group>
+              <Form.Group className="mt-2">
+                <Form.Label>Confirmation mot de passe</Form.Label>
+                <InputGroup>
+                  <Form.Control
+                    type={!visible ? "password" : "text"}
+                    value={formData.confirmPassword}
+                    onChange={(e) =>
+                      setFormData((prevData) => ({
+                        ...prevData,
+                        confirmPassword: e.target.value,
+                      }))
+                    }
+                  />
+                </InputGroup>
+              </Form.Group>
+
+              <Button
+                disabled={isLoading}
+                className="d-block ms-auto mt-4"
+                variant="success"
+                type="submit"
+              >
+                {isLoading ? (
+                  <FontAwesomeIcon icon={faSpinner} spin />
+                ) : (
+                  "S'inscrire"
+                )}
+              </Button>
+            </Form>
+          </Card.Body>
+          <Card.Footer className="text-center">
+            Vous avez déja un compte?
+            <Link to="/patient/login" className="btn-link">
+              Se connecter
+            </Link>
+          </Card.Footer>
+        </Card>
+      </Container>
+    </>
   );
 };
 

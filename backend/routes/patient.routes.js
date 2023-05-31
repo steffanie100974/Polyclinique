@@ -5,6 +5,8 @@ const {
   login,
   getAllPatients,
   getPatientProfile,
+  deletePatient,
+  getPatientData,
 } = require("../controllers/patient.controller");
 const patientAuth = require("../Middleware/patientAuthMiddleware");
 const medecinAuth = require("../Middleware/medecinAuthMiddleware");
@@ -13,16 +15,22 @@ const {
 } = require("../controllers/ordonnance.controller");
 const { getPatientRDVS } = require("../controllers/rdv.controller");
 const { getPatientFactures } = require("../controllers/facture.controller");
+const adminAuth = require("../Middleware/adminAuthMiddleware");
 
+route.get("/all", adminAuth, getAllPatients);
 route.get("/", patientAuth, getPatientProfile);
 
+route.get("/factures", patientAuth, getPatientFactures);
+route.get("/ordonnances", patientAuth, getPatientOrdonnances);
 route.get("/rdvs", patientAuth, getPatientRDVS);
-// get all patients
-route.get("/all", medecinAuth, getAllPatients);
-
 route.post("/register", register).post("/login", login);
 
-route.get("/ordonnances", patientAuth, getPatientOrdonnances);
-route.get("/factures", patientAuth, getPatientFactures);
+route.get("/:idPatient/factures", adminAuth, getPatientFactures);
+
+route.get("/:patientID", adminAuth, getPatientData);
+route.delete("/:patientID", adminAuth, deletePatient);
+
+route.get("/:idPatient/rdvs", adminAuth, getPatientRDVS);
+// get all patients
 
 module.exports = route;

@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import React from "react";
-import { getDoctorProfile, updateDoctorProfile } from "../../api/medecin";
+import { updateDoctorProfile } from "../../api/medecin";
 import { useUserContext } from "../../contexts/useUserContext";
 import { Alert, Button, Card, Container, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
@@ -9,30 +9,34 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { getAdminProfile, updateAdminProfile } from "../../api/admin";
 import { Helmet } from "react-helmet";
 
-const DoctorProfile = () => {
+const AdminProfile = () => {
   const navigate = useNavigate();
   const { userToken } = useUserContext();
   const queryClient = useQueryClient();
   const { isLoading, isError, error, isFetching } = useQuery({
-    queryFn: () => getDoctorProfile(userToken),
-    queryKey: ["medecin"],
-    onSuccess: (data) =>
+    queryFn: () => getAdminProfile(userToken),
+    queryKey: ["admin"],
+    onSuccess: (data) => {
+      console.log("admin profile", data);
       setFormData({
-        ...data,
+        email: data.email,
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
-      }),
-    onError: (error) => console.log("error get medecin", error),
+      });
+    },
+
+    onError: (error) => console.log("error get admin", error),
   });
 
   const { mutate, isLoading: isUpdating } = useMutation({
-    mutationFn: (updateData) => updateDoctorProfile(updateData, userToken),
+    mutationFn: (updateData) => updateAdminProfile(updateData, userToken),
     onSuccess: () => {
-      queryClient.invalidateQueries(["medecin"]);
-      toast.success("Profile modifié avec success");
+      queryClient.invalidateQueries(["admin"]);
+      toast.success("Compte modifié avec success");
     },
     onError: (error) => toast.error(getErrorMessage(error)),
   });
@@ -41,13 +45,7 @@ const DoctorProfile = () => {
 
   const handleUpdateProfile = (e) => {
     e.preventDefault();
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||
-      !formData.phone
-    )
-      return toast.error("Veuillez remplir les quatre entrées requises");
+    if (!formData.email) return toast.error("Veuillez remplir l'email");
 
     if (formData.newPassword !== formData.confirmPassword)
       return toast.error(
@@ -59,7 +57,6 @@ const DoctorProfile = () => {
   return (
     <>
       <Helmet>
-        <meta charSet="utf-8" />
         <title>Profile</title>
       </Helmet>
       <Container
@@ -82,43 +79,6 @@ const DoctorProfile = () => {
               )}
               {formData && (
                 <>
-                  <Form.Group className="my-2">
-                    <Form.Label>Prenom</Form.Label>
-                    <Form.Control
-                      value={formData.firstName}
-                      onChange={(e) =>
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          firstName: e.target.value,
-                        }))
-                      }
-                    />
-                  </Form.Group>
-                  <Form.Group className="my-2">
-                    <Form.Label>Nom</Form.Label>
-                    <Form.Control
-                      value={formData.lastName}
-                      onChange={(e) =>
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          lastName: e.target.value,
-                        }))
-                      }
-                    />
-                  </Form.Group>
-                  <Form.Group className="my-2">
-                    <Form.Label>Numero de telephone</Form.Label>
-                    <Form.Control
-                      value={formData.phone}
-                      type="tel"
-                      onChange={(e) =>
-                        setFormData((prevData) => ({
-                          ...prevData,
-                          phone: e.target.value,
-                        }))
-                      }
-                    />
-                  </Form.Group>
                   <Form.Group className="my-2">
                     <Form.Label>Email</Form.Label>
                     <Form.Control
@@ -185,7 +145,7 @@ const DoctorProfile = () => {
             </Card.Body>
             <Card.Footer className="d-flex justify-content-end">
               <Button
-                onClick={() => navigate("/medecin/dashboard")}
+                onClick={() => navigate("/admin/dashboard")}
                 variant="outline-secondary"
                 className="me-3"
               >
@@ -206,4 +166,4 @@ const DoctorProfile = () => {
   );
 };
 
-export default DoctorProfile;
+export default AdminProfile;

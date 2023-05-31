@@ -1,7 +1,5 @@
 import api from "./api";
 
-// errors ghaythandlaw b react-query
-
 export const adminLogin = async (email, password) => {
   const response = await api.post("/admin/login", {
     email,
@@ -58,6 +56,26 @@ export const resetDoctorPW = async (doctorID, newPassword, adminToken) => {
 
 export const getDoctor = async (doctorID, adminToken) => {
   const response = await api.get(`/medecin/all/${doctorID}/`, {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const getAdminProfile = async (adminToken) => {
+  const response = await api.get("/admin/profile", {
+    headers: {
+      Authorization: `Bearer ${adminToken}`,
+    },
+  });
+
+  return response.data;
+};
+
+export const updateAdminProfile = async (updateData, adminToken) => {
+  const response = await api.put("/admin/profile", updateData, {
     headers: {
       Authorization: `Bearer ${adminToken}`,
     },

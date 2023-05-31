@@ -14,7 +14,10 @@ const {
 } = require("../controllers/medecin.controller");
 const medecinAuth = require("../Middleware/medecinAuthMiddleware");
 const adminAuth = require("../Middleware/adminAuthMiddleware");
-const { getMedecinPatients } = require("../controllers/patient.controller");
+const {
+  getMedecinPatients,
+  getAllPatients,
+} = require("../controllers/patient.controller");
 const {
   getDoctorFactures,
   updateFacture,
@@ -25,7 +28,7 @@ const route = express.Router();
 route.get("/", medecinAuth, getDoctorProfile);
 route.put("/", medecinAuth, updateDoctorProfile);
 
-route.get("/patients", medecinAuth, getMedecinPatients);
+route.get("/patients", medecinAuth, getAllPatients);
 
 // medecin auth routes
 route.post("/register", register);
