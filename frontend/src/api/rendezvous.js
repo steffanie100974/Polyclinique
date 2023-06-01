@@ -36,6 +36,17 @@ export const getMedecinRDVS = async (medecinToken) => {
   return response.data;
 };
 
+export const getDoctorPastRDVS = async (medecinToken) => {
+  console.log("token to send", medecinToken);
+  const response = await api.get("/rendezvous/medecin/past", {
+    headers: {
+      Authorization: `Bearer ${medecinToken}`,
+    },
+  });
+
+  return response.data;
+};
+
 export const getAdminDoctorRDVS = async (idDoctor, adminToken) => {
   const response = await api.get(`/rendezvous/medecin/${idDoctor}`, {
     headers: {

@@ -1,8 +1,9 @@
 import React from "react";
-import MedecinRDVS from "../../components/MedecinRDVS";
 import { Container } from "react-bootstrap";
 import MedecinFacturesTable from "../../components/MedecinFacturesTable";
 import { Helmet } from "react-helmet";
+import MedecinPastRDVS from "../../components/MedecinPastRDVS";
+import MedecinFutureRDVS from "../../components/MedecinFutureRDVS";
 
 const MedecinFactures = () => {
   return (
@@ -12,8 +13,9 @@ const MedecinFactures = () => {
         <title>Factures</title>
       </Helmet>
       <Container className="py-4">
-        <MedecinRDVS />
+        <MedecinPastRDVS />
         <MedecinFacturesTable />
+        <MedecinFutureRDVS />
       </Container>
     </>
   );

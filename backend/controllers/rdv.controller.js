@@ -62,7 +62,7 @@ const deleteRDV = asyncHandler(async (req, res) => {
 });
 
 const getMedecinFutureRDVS = async (req, res) => {
-  const { _id: medecinID } = req.medecin;
+  const medecinID = req.medecin ? req.medecin._id : req.params.idDoctor;
   try {
     const futureRDVS = await RDV.find({
       medecin: medecinID,
@@ -85,6 +85,24 @@ const getMedecinRDVS = async (req, res) => {
     return res.status(200).json(rdvs);
   } catch (error) {
     console.log("erroor", error);
+    return res.status(500).json(error);
+  }
+};
+
+const getDoctorPastRDVS = async (req, res) => {
+  const medecinID = req.medecin ? req.medecin._id : req.params.idDoctor;
+
+  const currentDate = new Date();
+
+  try {
+    const rdvs = await RDV.find({
+      medecin: medecinID,
+      date: { $lt: currentDate },
+    }).populate("patient", "lastName firstName phone");
+
+    return res.status(200).json(rdvs);
+  } catch (error) {
+    console.log("error", error);
     return res.status(500).json(error);
   }
 };
@@ -127,4 +145,5 @@ module.exports = {
   getMedecinFutureRDVS,
   getMedecinRDVS,
   getPatientRDVS,
+  getDoctorPastRDVS,
 };

@@ -116,19 +116,19 @@ const PatientRDVS = () => {
                       <tr>
                         <th>Medecin</th>
                         <th>Date de rendez-vous</th>
+                        <th>Heure</th>
                         <th>Date de reservation</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {futureRDVS.map((rdv) => (
+                      {pastRDVS.map((rdv) => (
                         <tr key={rdv._id}>
-                          <Link to={`/patient/reservations/${rdv._id}`}>
-                            <td>
-                              {rdv.medecin.firstName} {rdv.medecin.lastName}
-                            </td>
-                            <td>{formatDate(rdv.date)}</td>
-                            <td>{formatDate(rdv.createdAt)}</td>
-                          </Link>
+                          <td>
+                            {rdv.medecin.firstName} {rdv.medecin.lastName}
+                          </td>
+                          <td>{formatDate(rdv.date)}</td>
+                          <td>{rdv.hour}</td>
+                          <td>{formatDate(rdv.createdAt)}</td>
                         </tr>
                       ))}
                     </tbody>

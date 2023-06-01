@@ -2,11 +2,11 @@ import React from "react";
 import { Alert, Table } from "react-bootstrap";
 import { getErrorMessage } from "../helpers/getErrorMessage";
 import { useQuery } from "@tanstack/react-query";
-import { getMedecinRDVS } from "../api/rendezvous";
+import { getDoctorPastRDVS, getMedecinRDVS } from "../api/rendezvous";
 import { useUserContext } from "../contexts/useUserContext";
 import SingleMedecinRDVRow from "./SingleMedecinRDVRow";
 
-const MedecinRDVS = () => {
+const MedecinPastRDVS = () => {
   const { userToken } = useUserContext();
   const {
     data: rdvs,
@@ -18,15 +18,19 @@ const MedecinRDVS = () => {
     queryKey: ["rendezvous"],
   });
 
+  const pastRDVS = rdvs
+    ? rdvs.filter((rdv) => new Date(rdv.date) < new Date())
+    : undefined;
+
   return (
     <>
-      <h3>Mes rendez-vous</h3>
+      <h3>Mes rendez-vous passés</h3>
       {isError && <Alert variant="info">{getErrorMessage(error)}</Alert>}
       {isLoading && (
-        <Alert variant="info">Chargement de vos rendez-vous...</Alert>
+        <Alert variant="info">Chargement de vos rendez-vous passés...</Alert>
       )}
-      {rdvs &&
-        (rdvs.length > 0 ? (
+      {pastRDVS &&
+        (pastRDVS.length > 0 ? (
           <Table responsive striped bordered>
             <thead>
               <tr>
@@ -37,7 +41,7 @@ const MedecinRDVS = () => {
               </tr>
             </thead>
             <tbody>
-              {rdvs.map((rdv) => (
+              {pastRDVS.map((rdv) => (
                 <SingleMedecinRDVRow key={rdv._id} rdv={rdv} />
               ))}
             </tbody>
@@ -49,4 +53,4 @@ const MedecinRDVS = () => {
   );
 };
 
-export default MedecinRDVS;
+export default MedecinPastRDVS;

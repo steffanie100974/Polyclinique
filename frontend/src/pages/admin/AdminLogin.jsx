@@ -62,7 +62,7 @@ const AdminLogin = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Form.Group>
-              <Form.Group>
+              <Form.Group className="mt-3">
                 <Form.Label>Password</Form.Label>
                 <Form.Control
                   required
